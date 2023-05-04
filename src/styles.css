@@ -1,1 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+p{
+  user-select: none;
+  /* will not allow to select */
+}
+
+div{
+  place-items: center;
+}
+
+/* div{
+  clip-path: ellipse(25% 40% at 50% 50%);
+} */
+
+
+blend{
+  width: 100px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blend{
+  position: absolute;
+}
+
+.blend h1{
+  font-size: 150px;
+  mix-blend-mode: overlay;
+}

@@ -1,0 +1,40 @@
+<div class="assement-bottom">
+  <div
+    class="assement-heder d-flex flex-wrap align-items-center justify-content-end question-header"
+  >
+    <button class="add-new" (click)="openFaqModal()">Add FQA</button>
+  </div>
+
+  <div *ngIf="allFaq.length" class="question-list-wrapperS">
+    <div class="quesion-inner">
+      <div class="question-title">
+        <h2>FAQs</h2>
+      </div>
+      <div class="question-main-list">
+        <ng-container *ngFor="let category of allFaq">
+          <div
+            class="question-list"
+            [class]="{ 'active-question': category.active }"
+          >
+            <div (click)="onSectionChange(category.id)">
+              <h3>
+              {{category?.question}}</h3>
+              <div class="d-flex align-items-center">
+                <a (click)="$event.stopPropagation(); onFaqEditCLick(category)" class="delete-arrow pe-2 ps-2"></a>
+                <a (click)="$event.stopPropagation(); onDelete(category)" class="delete-arrow pe-2 ps-2"></a>
+              </div>
+            </div>
+            <div
+              class="question-list-content-wrapper p2"
+              [class]="{ 'd-none': !category.active }"
+            >
+              <p>
+                {{ category.answer }}
+              </p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

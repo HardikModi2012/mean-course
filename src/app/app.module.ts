@@ -3,12 +3,18 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { PostsComponent } from './posts/posts.component';
+import { MessageComponent } from 'src/shared/message/message.component';
+import { CourseListComponent } from './course-list/course-list.component';
+import { RandomFaqComponent } from './random-faq/random-faq.component';
 
 @NgModule({
-  declarations: [
+  declarations: [		
     AppComponent,
-    PostsComponent
-  ],
+    PostsComponent,
+    MessageComponent,
+      CourseListComponent,
+      RandomFaqComponent
+   ],
   imports: [
     BrowserModule
   ],
