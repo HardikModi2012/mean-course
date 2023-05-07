@@ -1,4 +1,4 @@
-:host {
+/* :host {
   min-height: 100vh;
 
   display: flex;
@@ -8,4 +8,10 @@
 .content{
   flex-grow: 1;
   padding: 1rem;
+} */
+
+main{
+  margin-top: 1rem;
+  width: 80%;
+  margin: auto;
 }

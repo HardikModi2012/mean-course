@@ -31,3 +31,6 @@ blend{
   font-size: 150px;
   mix-blend-mode: overlay;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
