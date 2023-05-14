@@ -1,10 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const Post = require('./models/post');
+const { default: mongoose } = require('mongoose');
 const app = express();
 
-app.use(bodyParser.json());
+mongoose.connect("mongodb+srv://Hardik:<password>@cluster0.ook3zgw.mongodb.net/").then(() => {
+console.log('Connected to database');
+})
+.catch(()=>{
+  console.log('Connection failed!');
 
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*") // to set header
@@ -14,8 +23,11 @@ app.use((req, res, next) => {
 })
 
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
-  console.log();
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  })
+  console.log(post);
   res.status(201).json({
     message: 'Post added successfully',
     posts: posts
@@ -38,7 +50,7 @@ app.use('/api/posts',(req, res, next) => {
   // next();
 })
 app.use('/api/posts' , (req, res, next) => {
-  res.send('HEllo from res');
+  res.send('Hello from res');
 })
 
 app.post('/api/posts', (req, res, next) => {
