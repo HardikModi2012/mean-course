@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
-
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-posts-list',
   templateUrl: './posts-list.component.html',
   styleUrls: ['./posts-list.component.css']
 })
-export class PostsListComponent implements OnInit {
+export class PostsListComponent implements OnInit, OnDestroy {
   // posts = [
   //   {id: '123', title: 'First Post', content: 'This is coming from the server'},
   //   {id: '124', title: 'Second Post', content: 'This is coming from  the 2nd server'},
@@ -18,7 +18,7 @@ export class PostsListComponent implements OnInit {
 
   // @Input() posts: Post[] = [];
   posts: Post[] = [];
-  // private postSub = ;
+  private postSub: Subscription ;
   constructor(private postService: PostsService) { }
 
   ngOnInit() {
@@ -26,9 +26,17 @@ export class PostsListComponent implements OnInit {
 
   get(){
     this.posts = this.postService.getPosts();
-    this.postService.getPostUpdateListener().subscribe((posts: Post[]) =>{
+    console.log("posts", this.posts);
+
+    this.postSub= this.postService.getPostUpdateListener().subscribe((posts: Post[]) =>{
       this.posts = posts;
+    console.log("posts", this.posts);
+
     })
+  }
+
+  ngOnDestroy(): void { // to prevent memory leaks
+      this.postSub.unsubscribe();
   }
 
 }

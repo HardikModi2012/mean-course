@@ -20,6 +20,13 @@ import { PostsListComponent } from './posts/posts-list/posts-list.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { PostsService } from './posts/posts.service';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatListModule} from '@angular/material/list';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,11 +47,17 @@ import { PostsService } from './posts/posts.service';
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatListModule,
+    MatAutocompleteModule,
     CdkAccordionModule,
     MatExpansionModule,
     HttpClientModule
   ],
-  providers: [PostsService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

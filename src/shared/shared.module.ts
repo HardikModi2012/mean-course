@@ -2,11 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarService } from './services/sidebar.service';
+import { DropdownComponent } from './dropdown/dropdown.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    DropdownComponent
+  ],
   imports: [
     CommonModule
   ],

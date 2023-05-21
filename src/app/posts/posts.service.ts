@@ -22,9 +22,13 @@ export class PostsService {
   getPostUpdateListener(){
    return this.postUpdated.asObservable();
   }
+
   addPost(title: string, content: string){
-    const post: Post = {title: title, content: content};
-    this.posts.push(post);
-    this.postUpdated.next([...this.posts]);
+    const post: Post = { id: null, title: title, content: content};
+    this.http.post<{message: string}>('', post).subscribe((responseData) => {
+      console.log(responseData.message);
+      this.posts.push(post);
+      this.postUpdated.next([...this.posts]);
+    })
   }
 }
