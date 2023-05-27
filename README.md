@@ -13,6 +13,11 @@ than we have added package nodemon while saving
 
 # nodemon
 
+# npm install --save-dev nodemon 
+(development side only)
+
+whenever any changes on server side, this will check files and if there is any changes than automatically restart the server
+
 body-parser is used as middle-ware 
 data is coming as string so this package will parse that to data Object
 # npm install --save body-parser
@@ -24,4 +29,6 @@ added mongoose package for db connection to mongo db
 and also added extension of MongoDb in VS code
 
 Search extension with Mongodb for VS CODE
+
+nodemon
 

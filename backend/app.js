@@ -3,17 +3,16 @@ const bodyParser = require('body-parser');
 const Post = require('./models/post');
 const { default: mongoose } = require('mongoose');
 const app = express();
-
-mongoose.connect("mongodb+srv://Hardik:<password>@cluster0.ook3zgw.mongodb.net/").then(() => {
+// Representation State transfer protocol
+mongoose.connect("mongodb+srv://Hardik:mypassmongo@cluster0.ook3zgw.mongodb.net/node-angular?retryWrites=true").then(() => {
 console.log('Connected to database');
 })
 .catch(()=>{
   console.log('Connection failed!');
-
 });
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*") // to set header
@@ -28,33 +27,40 @@ app.post("/api/posts", (req, res, next) => {
     content: req.body.content,
   })
   console.log(post);
+  post.save();
   res.status(201).json({
-    message: 'Post added successfully',
-    posts: posts
+    message: 'Post added successfully'
   });
 })
 
-app.use('/api/posts',(req, res, next) => {
-  const posts = [
-    {id: '123', title: 'First Post', content: 'This is coming from the server'},
-    {id: '124', title: 'Second Post', content: 'This is coming from  the 2nd server'},
-    {id: '125', title: 'Third Post', content: 'This is coming from the 3rd server'},
-    {id: '126', title: 'Fourth Post', content: 'This is coming from the 4th server'},
-    {id: '127', title: 'Fifth Post', content: 'This is coming from the 5th server'},
-  ]// console.log('This is middleware part printing');
-  res.json(posts);
-  res.status(200).json({
-    message: 'Post fetch successfully',
-    posts: posts
-  });
+app.get("/api/posts",(req, res, next) => {
+  Post.find().then((documents) =>{
+    console.log("documents", documents);
+    res.status(200).json({
+      message: 'Posts fetch successfully',
+      posts: documents
+    });
+  })
+  // res.json(posts);
   // next();
 })
-app.use('/api/posts' , (req, res, next) => {
-  res.send('Hello from res');
-})
 
-app.post('/api/posts', (req, res, next) => {
-  const post = '';
-});
+app.delete("/api/posts/:id", (req,res, next) =>{
+  Post.deleteOne({
+    _id: req.params.id
+  }).then((response) => {
+    res.status(200).json({
+      message: 'Posts fetch successfully',
+      posts: documents
+    });
+  })
+})
+// app.use('/api/posts' , (req, res, next) => {
+//   res.send('Hello from res');
+// })
+
+// app.post('/api/posts', (req, res, next) => {
+//   const post = '';
+// });
 
 module.exports = app;

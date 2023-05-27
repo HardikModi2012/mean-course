@@ -8,31 +8,26 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./posts-list.component.css']
 })
 export class PostsListComponent implements OnInit, OnDestroy {
-  // posts = [
-  //   {id: '123', title: 'First Post', content: 'This is coming from the server'},
-  //   {id: '124', title: 'Second Post', content: 'This is coming from  the 2nd server'},
-  //   {id: '125', title: 'Third Post', content: 'This is coming from the 3rd server'},
-  //   {id: '126', title: 'Fourth Post', content: 'This is coming from the 4th server'},
-  //   {id: '127', title: 'Fifth Post', content: 'This is coming from the 5th server'},
-  // ]
-
   // @Input() posts: Post[] = [];
   posts: Post[] = [];
   private postSub: Subscription ;
   constructor(private postService: PostsService) { }
 
   ngOnInit() {
-  }
-
-  get(){
-    this.posts = this.postService.getPosts();
-    console.log("posts", this.posts);
-
+    this.postService.getPosts();
     this.postSub= this.postService.getPostUpdateListener().subscribe((posts: Post[]) =>{
       this.posts = posts;
-    console.log("posts", this.posts);
-
+      console.log("posts", this.posts);
     })
+  }
+
+  editPost(){}
+
+  deleteRecord(id: string){
+    // this.postSub= this.postService.deletePost(id).subscribe(() =>{
+    //   this.posts = posts;
+    //   console.log("posts", this.posts);
+    // })
   }
 
   ngOnDestroy(): void { // to prevent memory leaks

@@ -3,8 +3,8 @@
     <mat-expansion-panel-header>{{post.title}}</mat-expansion-panel-header>
     <mat-expansion-panel-header>{{post.content}}</mat-expansion-panel-header>
     <mat-action-row>
-      <button mat-button color="accent">Edit</button>
-      <button mat-button color="warm">Delete</button>
+      <button mat-button color="accent" (click)="editPost()">Edit</button>
+      <button mat-button color="warm" (click)="deleteRecord(post.id)">Delete</button>
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
