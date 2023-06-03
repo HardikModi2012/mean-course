@@ -26,6 +26,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatListModule} from '@angular/material/list';
+import { MatModule } from './appModules/mat.module';
+import { AppRoutingModule } from './appRouting.module';
 
 @NgModule({
   declarations: [
@@ -41,21 +43,11 @@ import {MatListModule} from '@angular/material/list';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     FormsModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatListModule,
-    MatAutocompleteModule,
     CdkAccordionModule,
-    MatExpansionModule,
-    HttpClientModule
+    HttpClientModule,
+    MatModule
   ],
   providers: [],
   bootstrap: [AppComponent]
