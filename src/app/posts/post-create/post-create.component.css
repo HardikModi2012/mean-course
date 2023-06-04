@@ -7,3 +7,9 @@ mat-form-field,
 textarea{
   width: 100%;
 }
+
+
+.steps{
+background: repeating-linear-gradient(90deg, #606DBC, #606DBC 40px, #465298 40px, #465298 80px);
+letter-spacing: 73px;
+}

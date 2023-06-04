@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-course-list',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CourseListComponent implements OnInit {
 
+
+  gridData : BehaviorSubject<[]>
   constructor() { }
 
   ngOnInit() {
@@ -14,6 +17,10 @@ export class CourseListComponent implements OnInit {
 
   openClassModel(){
 
+  }
+
+  gridRowSelected(){
+    // this.
   }
 
 }

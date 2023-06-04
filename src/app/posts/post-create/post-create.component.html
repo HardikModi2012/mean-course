@@ -4,15 +4,21 @@
       <input matInput type="text" name="title" ngModel minlength="3" required #title="ngModel"/>
       <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
       <!-- #postInput  -->
-      <mat-error *ngIf="title.invalid">Please enter post title.</mat-error>
+      <mat-error *ngIf="title.invalid">Please enter Post Title.</mat-error>
     </mat-form-field>
+
+    <!-- <mat-form-field>
+      <input type="text" name="otp" ngModel minlength="3" class="form-control steps" required #title="ngModel"/>-->
+      <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
+      <!-- #postInput  -->
+      <!-- <mat-error *ngIf="title.invalid">Please enter Post Title.</mat-error> -->
+    <!-- </mat-form-field> -->
     <mat-form-field>
-      <textarea matInput rows="6" name="content" ngModel #content="ngModel"></textarea>
+      <textarea matInput rows="6" name="content" ngModel #content="ngModel" required></textarea>
       <!-- <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea> -->
-      <mat-error *ngIf="content.invalid">Please enter post content.</mat-error>
+      <mat-error *ngIf="content.invalid">Please enter Post Content.</mat-error>
     </mat-form-field>
     <button mat-raised-button color="accent" type="submit">Save Post</button>
   </form>
 </mat-card>
 
-{{ samplePost }}

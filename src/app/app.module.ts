@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +20,15 @@ import { PostsListComponent } from './posts/posts-list/posts-list.component';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { PostsService } from './posts/posts.service';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatListModule} from '@angular/material/list';
+import { MatModule } from './appModules/mat.module';
+import { AppRoutingModule } from './appRouting.module';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,16 +43,13 @@ import { PostsService } from './posts/posts.service';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     FormsModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatIconModule,
     CdkAccordionModule,
-    MatExpansionModule
+    HttpClientModule,
+    MatModule
   ],
-  providers: [PostsService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -8,9 +8,9 @@ import { Post } from './posts/post.model';
 })
 export class AppComponent {
   title = 'mean-course';
-  storedPosts: Post[] =[];
+  // storedPosts: Post[] =[];
 
-  onAddedPost(data){
-    this.storedPosts.push(data);
-  }
+  // onAddedPost(data){
+  //   this.storedPosts.push(data);
+  // }
 }
