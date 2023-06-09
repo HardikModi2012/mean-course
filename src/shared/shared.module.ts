@@ -3,15 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarService } from './services/sidebar.service';
 import { DropdownComponent } from './dropdown/dropdown.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 
 
 
 @NgModule({
   declarations: [
-    DropdownComponent
+    DropdownComponent,
+    VideoPlayerComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+  ],
+  exports:[
+    VideoPlayerComponent
   ],
   providers:[
     {
