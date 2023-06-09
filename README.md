@@ -1,5 +1,9 @@
 here we have used material ui for easy designing solutions.
 
+whenever we want to use viewChild() , we need to use it in ngAfterViewInit() life-cycle hook.
+
+
+we used iframe to render uploaded video, in that, few attributes are used.
 # mean-course
 
 #1 to install packages , need to run npm install in root path
