@@ -13,7 +13,7 @@ import { MessageComponent } from 'src/shared/message/message.component';
 import { CourseListComponent } from './course-list/course-list.component';
 import { RandomFaqComponent } from './random-faq/random-faq.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PostCreateComponent } from './posts/post-create/post-create.component';
 import { HeaderComponent } from './header/header.component';
 import { PostsListComponent } from './posts/posts-list/posts-list.component';
@@ -28,6 +28,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatListModule} from '@angular/material/list';
 import { MatModule } from './appModules/mat.module';
 import { AppRoutingModule } from './appRouting.module';
+import { CreateCourseComponent } from './course-list/create-course/create-course.component';
 
 @NgModule({
   declarations: [
@@ -38,13 +39,15 @@ import { AppRoutingModule } from './appRouting.module';
     RandomFaqComponent,
     PostCreateComponent,
     HeaderComponent,
-    PostsListComponent
+    PostsListComponent,
+    CreateCourseComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     CdkAccordionModule,
     HttpClientModule,
     MatModule

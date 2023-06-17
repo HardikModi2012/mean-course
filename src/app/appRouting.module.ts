@@ -2,11 +2,13 @@ import { NgModule } from "@angular/core";
 import { PostsListComponent } from "./posts/posts-list/posts-list.component";
 import { Routes, RouterModule } from "@angular/router";
 import { PostCreateComponent } from "./posts/post-create/post-create.component";
+import { CreateCourseComponent } from "./course-list/create-course/create-course.component";
 
 
 const routes: Routes = [
   { path: '', component: PostsListComponent},
   { path: 'create', component: PostCreateComponent},
+  { path: 'create-course', component: CreateCourseComponent},
   { path: '**', component: PostsListComponent},
   { path: '', component: PostsListComponent},
 ]

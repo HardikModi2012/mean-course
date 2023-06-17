@@ -6,8 +6,9 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent implements OnInit, AfterViewInit {
-
-  @ViewChild('videoContainer', {static: false}) videoContainer : ElementRef<any>
+  videoPath: any = '';
+  isInvalidFormat = false;
+  @ViewChild('videoContainer', { static: false }) videoContainer: ElementRef<any>
 
   constructor() { }
 
@@ -15,29 +16,42 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit {
   }
 
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.renderVideo();
   }
 
-  renderVideo(){
-    let elm = document.createElement('iframe') as HTMLIFrameElement;
-    elm.src = '';
+  renderVideo() {
+    if (this.videoPath) {
+      let path = '';
+      if (this.videoPath) {
+        path = this.videoPath.slice(this.videoPath.indexOf('.') + 1)
 
-    elm.height = '';
-    elm.width = '';
-    elm.title = '';
-    elm.frameBorder = '0';
-    elm.allow = 'accelerometer, autoplay, clipboard-write, encrypted-media; gyroscope; picture-in-picture'
-    // elm.onplayin
-    elm.allowFullscreen = true;
-    elm.style.paddingTop = '20px';
+        if (path !== 'mp4' && path !== 'webm') {
+          this.isInvalidFormat = true;
+        } else {
+          let elm = document.createElement('iframe') as HTMLIFrameElement;
+          elm.src = '';
 
-    this.videoContainer.nativeElement.appendChild(elm);
-    elm.onload = function() {
-      console.log("The elm is loaded");
+          elm.height = '';
+          elm.width = '';
+          elm.title = '';
+          elm.frameBorder = '0';
+          elm.allow = 'accelerometer, autoplay, clipboard-write, encrypted-media; gyroscope; picture-in-picture'
+          // elm.onplayin
+          elm.allowFullscreen = true;
+          elm.style.paddingTop = '20px';
+
+          this.videoContainer.nativeElement.appendChild(elm);
+          elm.onload = function () {
+            console.log("The elm is loaded");
+          }
+          elm.onerror = function () {
+            console.log("Something wrong happened");
+          }
+        }
+      }
+
     }
-    elm.onerror = function() {
-      console.log("Something wrong happened");
-    }
+
   }
 }
