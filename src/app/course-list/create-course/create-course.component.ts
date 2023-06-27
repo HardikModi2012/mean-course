@@ -9,6 +9,19 @@ export class CreateCourseComponent implements OnInit {
   powers = ['Really Smart', 'Super Flexible',
   'Super Hot', 'Weather Changer'];
 
+  // to generate random string
+  // const randomString = () => Math.random().toString(36).slice(2)
+  // escape HTML special characters
+  // const escape = (str) => str.replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]))
+  // escape('<div class="medium">Hi Medium.</div>')
+
+  // to uppercase first character of each word in string
+  // const uppercaseWords = (str) => str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase())
+
+  // convert string to camelCase
+  // const toCamelCase = (str) => str.trim().replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''));
+
+
   model: any = {};
   constructor() { }
 
