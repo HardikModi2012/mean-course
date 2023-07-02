@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { NgForm } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-post-create',
@@ -11,14 +12,29 @@ import { HttpClient } from '@angular/common/http';
 })
 export class PostCreateComponent implements OnInit {
   samplePost = 'No Content!!!';
-
   enteredTitle = "";
   enteredContent = "";
   image = "";
+  private mode = "create";
+  private postId: string;
+  post: Post;
   // @Output() postCreated = new EventEmitter<Post>();
-  constructor(private postService: PostsService, private http: HttpClient) { }
+  constructor(private postService: PostsService, private http: HttpClient, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.paramMap.subscribe((paramMap: ParamMap)=> {
+      if (paramMap.has('postId')) {
+        this.mode = 'edit';
+        this.postId = paramMap.get('postId');
+        this.postService.getPost(this.postId).subscribe((data) => {
+          this.post = {id: data._id, title: data.title, content: data.content }
+        })
+      }
+      else{
+        this.mode = 'create';
+        this.postId = null;
+      }
+    })
   }
 
   savePost(event: HTMLTextAreaElement) {
@@ -44,7 +60,7 @@ export class PostCreateComponent implements OnInit {
 
   }
 
-  addPost(form: NgForm){
+  onSavePost(form: NgForm){
     if(form.invalid){
       return;
     }
@@ -53,7 +69,11 @@ export class PostCreateComponent implements OnInit {
     //   content: form.value.content,
     // }
     // this.postCreated.emit(post);
-    this.postService.addPost(form.value.title,form.value.content, form.value.image);
+    if (this.mode === 'create') {
+      this.postService.addPost(form.value.title,form.value.content, form.value.image);
+    } else {
+      this.postService.updatePost(this.postId,form.value.content, form.value.image);
+    }
     form.reset();
   }
 

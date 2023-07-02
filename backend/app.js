@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*") // to set header
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept") // to set header , to allow origin header
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS") // to allow all http methods
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS") // to allow all http methods
   next();
 })
 
@@ -33,6 +33,19 @@ app.post("/api/posts", (req, res, next) => {
   });
 })
 
+app.put("/api/posts/:id", (req, res, next) => {
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content,
+  })
+  Post.updateOne({_id: req.params.id}, post).then(result => {
+    res.status(201).json({
+      message: 'Post updated successfully'
+    });
+  })
+})
+
 app.get("/api/posts",(req, res, next) => {
   Post.find().then((documents) =>{
     console.log("documents", documents);
@@ -45,12 +58,25 @@ app.get("/api/posts",(req, res, next) => {
   // next();
 })
 
+app.get("/api/posts/:id",(req, res, next) => {
+  Post.findById(req.params.id).then((post) =>{
+   if (post) {
+     res.status(200).json(post);
+    } else {
+     res.status(404).json();
+   }
+  })
+  // res.json(posts);
+  // next();
+})
+
+
 app.delete("/api/posts/:id", (req,res, next) =>{
   Post.deleteOne({
     _id: req.params.id
   }).then((response) => {
     res.status(200).json({
-      message: 'Posts fetch successfully',
+      message: 'Post delete successfully',
       posts: documents
     });
   })
