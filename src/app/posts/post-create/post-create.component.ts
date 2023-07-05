@@ -18,19 +18,22 @@ export class PostCreateComponent implements OnInit {
   private mode = "create";
   private postId: string;
   post: Post;
+  isLoading = false;
   // @Output() postCreated = new EventEmitter<Post>();
   constructor(private postService: PostsService, private http: HttpClient, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((paramMap: ParamMap)=> {
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
+        this.isLoading = true;
         this.postService.getPost(this.postId).subscribe((data) => {
-          this.post = {id: data._id, title: data.title, content: data.content }
+          this.isLoading = false;
+          this.post = { id: data._id, title: data.title, content: data.content }
         })
       }
-      else{
+      else {
         this.mode = 'create';
         this.postId = null;
       }
@@ -41,27 +44,27 @@ export class PostCreateComponent implements OnInit {
     this.samplePost = event.value;
   }
 
-  onSelectFile(event: any){
+  onSelectFile(event: any) {
 
-      const file:File = event.target.files[0];
+    const file: File = event.target.files[0];
 
-      if (file) {
+    if (file) {
 
-          this.image = file.name;
+      this.image = file.name;
 
-          const formData = new FormData();
+      const formData = new FormData();
 
-          formData.append("thumbnail", file);
+      formData.append("thumbnail", file);
 
-          const upload$ = this.http.post("/api/thumbnail-upload", formData);
+      const upload$ = this.http.post("/api/thumbnail-upload", formData);
 
-          upload$.subscribe();
-      }
+      upload$.subscribe();
+    }
 
   }
 
-  onSavePost(form: NgForm){
-    if(form.invalid){
+  onSavePost(form: NgForm) {
+    if (form.invalid) {
       return;
     }
     // const post: Post = {
@@ -70,9 +73,9 @@ export class PostCreateComponent implements OnInit {
     // }
     // this.postCreated.emit(post);
     if (this.mode === 'create') {
-      this.postService.addPost(form.value.title,form.value.content, form.value.image);
+      this.postService.addPost(form.value.title, form.value.content, form.value.image);
     } else {
-      this.postService.updatePost(this.postId,form.value.content, form.value.image);
+      this.postService.updatePost(this.postId, form.value.content, form.value.image);
     }
     form.reset();
   }
