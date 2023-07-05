@@ -37,4 +37,14 @@ and also added extension of MongoDb in VS code
 Search extension with Mongodb for VS CODE
 
 nodemon
+-------
 
+added interceptor for example which will be useful for modify request 
+
+added guard for routing files
+
+added localStorage code
+
+--------
+
+if connection failed occurred in mongodb , lease check yur current IP and replace it with in  MONGO CLOUD security > IP access list

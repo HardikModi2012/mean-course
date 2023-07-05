@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Post } from './posts/post.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,14 @@ import { Post } from './posts/post.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  path = environment.path;
+
   title = 'mean-course';
+
+  constructor(){
+    console.log("environ", this.path);
+
+  }
   // storedPosts: Post[] =[];
 
   // onAddedPost(data){

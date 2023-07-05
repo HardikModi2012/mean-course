@@ -12,6 +12,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const material = [
   MatInputModule,
@@ -26,7 +27,10 @@ const material = [
   MatListModule,
   MatAutocompleteModule,
   MatExpansionModule,
-  MatListModule]
+  MatListModule,
+  MatProgressSpinnerModule
+
+]
 
 @NgModule({
   declarations: [],
