@@ -1,5 +1,6 @@
 const express = require("express");
 const Post = require('../models/post');
+const Post = require('multer');
 
 const router = express.Router();
 

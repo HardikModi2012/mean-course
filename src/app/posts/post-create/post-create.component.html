@@ -1,25 +1,47 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm"  *ngIf="isLoading">
+  <form [formGroup]="form" (submit)="onSavePost()" *ngIf="isLoading">
     <mat-form-field>
-      <input matInput type="text" name="title" [ngModel]="post?.title" minlength="3" placeholder="please add data" required #title="ngModel"/>
-      <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
+      <input
+        matInput
+        type="text"
+        name="title"
+        minlength="3"
+        placeholder="please add data"
+        formControlName="title"
+        />
+        <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
+        <!-- [ngModel]="post?.title"
+        #title="ngModel" -->
       <!-- #postInput  -->
-      <mat-error *ngIf="title.invalid">Please enter post title.</mat-error>
+      <mat-error *ngIf="form.get('title').invalid">Please enter post title.</mat-error>
     </mat-form-field>
-
+    <div>
+      <button mat-stroked-button type="button" (click)="filePicker.click()"></button>
+      <input type="file" #filePicker (change)="onImagePicked($event)"/>
+    </div>
+    <div class="image-preview" ngIf="imagePreview && imagePreview!== ''">
+      <input src="imagePreview" [alt]="form.value.title"/>
+    </div>
     <!-- <mat-form-field>
       <input type="text" name="otp" ngModel minlength="3" class="form-control steps" required #title="ngModel"/>-->
-      <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
-      <!-- #postInput  -->
-      <!-- <mat-error *ngIf="title.invalid">Please enter Post Title.</mat-error> -->
+    <!-- <input matInput type="text" [(ngModel)]="enteredTitle" /> -->
+    <!-- #postInput  -->
+    <!-- <mat-error *ngIf="title.invalid">Please enter Post Title.</mat-error> -->
     <!-- </mat-form-field> -->
     <mat-form-field>
-      <textarea matInput type="text" rows="6" id="content" name="content" [ngModel]="post?.content" placeholder="please add data" #content="ngModel" required></textarea>
+      <textarea
+        matInput
+        type="text"
+        rows="6"
+        id="content"
+        name="content"
+        formControlName="content"
+        placeholder="please add data"
+      ></textarea>
       <!-- <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea> -->
-      <mat-error *ngIf="content.invalid">Please enter post content.</mat-error>
+      <mat-error *ngIf="form.get('content').invalid">Please enter post content.</mat-error>
     </mat-form-field>
     <button mat-raised-button color="accent" type="submit">Save Post</button>
   </form>
 </mat-card>
-
