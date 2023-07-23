@@ -1,40 +1,58 @@
-mat-card{
+mat-card {
   width: 80%;
   margin: auto;
 }
 
 mat-form-field,
-textarea{
+textarea {
   width: 100%;
 }
 
+mat-spinner {
+  margin: auto;
+}
 
-.steps{
-background: repeating-linear-gradient(90deg, #606DBC, #606DBC 40px, #465298 40px, #465298 80px);
-letter-spacing: 73px;
+.steps {
+  background: repeating-linear-gradient(90deg, #606DBC, #606DBC 40px, #465298 40px, #465298 80px);
+  letter-spacing: 73px;
 }
 
 .file-input {
   display: none;
 }
 
-input:invalid{
+input:invalid {
   animation: shake 300ms;
   color: red;
 }
 
 @keyframes shake {
-  25%{
+  25% {
     transform: translate(4px);
   }
-  50%{
+
+  50% {
     transform: translate(4px);
   }
-  75%{
+
+  75% {
     transform: translate(4px);
   }
+
   /* 100%{
     transform: translate(4px);
   } */
 }
 
+input[type="file"] {
+  visibility: hidden;
+}
+
+.image-preview {
+  height: 5rem;
+  margin: 1rem 0;
+}
+
+.image-preview img {
+  height: 100%;
+}

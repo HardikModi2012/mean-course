@@ -1,0 +1,492 @@
+
+@font-face {
+    font-family: 'Roxborough CF';
+    src: url('../font/RoxboroughCF-Light.woff2') format('woff2'),
+        url('../font/RoxboroughCF-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roxborough CF';
+    src: url('../font/RoxboroughCF-Regular.woff2') format('woff2'),
+        url('../font/RoxboroughCF-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roxborough CF';
+    src: url('../font/RoxboroughCF-Light.woff2') format('woff2'),
+        url('../font/RoxboroughCF-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roxborough CF';
+    src: url('../font/RoxboroughCF-Regular.woff2') format('woff2'),
+        url('../font/RoxboroughCF-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet Book';
+    src: url('../font/Garet-Book.woff2') format('woff2'),
+        url('../font/Garet-Book.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet Book';
+    src: url('../font/Garet-Book.woff2') format('woff2'),
+        url('../font/Garet-Book.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet Book';
+    src: url('../font/Garet-Book.woff2') format('woff2'),
+        url('../font/Garet-Book.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet Book';
+    src: url('../font/Garet-Book.woff2') format('woff2'),
+        url('../font/Garet-Book.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet';
+    src: url('../font/Garet-Heavy.woff2') format('woff2'),
+        url('../font/Garet-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet';
+    src: url('../font/Garet-Heavy.woff2') format('woff2'),
+        url('../font/Garet-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet';
+    src: url('../font/Garet-Heavy.woff2') format('woff2'),
+        url('../font/Garet-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Garet';
+    src: url('../font/Garet-Heavy.woff2') format('woff2'),
+        url('../font/Garet-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+p,
+label,
+span,
+h1,
+h2,
+h3,
+h4,
+ul,
+li,
+a {
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+.agent-wrapper {
+    max-width: 595px;
+    background: #fff;
+    margin: 0 auto;
+}
+
+.agent-wrapper-inner {
+    padding: 30px;
+}
+.agent-header .agent-wrapper-inner-left{
+    width: 150px;
+}
+.agent-header .agent-wrapper-inner-right{
+    width: calc(100% - 150px);
+    text-align: center;
+}
+.agent-wrapper-inner .agent-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.agent-wrapper-inner .agent-body-container {
+    text-align: center;
+}
+
+.agent-wrapper-inner-left .agent-logo-left img {
+    width: 150px;
+}
+
+.agent-wrapper-inner-right h2 {
+    font-size: 33px;
+    padding-bottom: 10px;
+    letter-spacing: 5px;
+    font-weight: 500;
+    font-family: 'Roxborough CF';
+
+}
+.agent-wrapper-inner-right h4{
+    font-weight: 700;
+    font-family: 'Garet Book';
+}
+
+.agent-body-container h3 {
+    text-align: center;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-body-container .agent-body-input {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.agent-body-input .agent-body-input-content {
+    width: calc(33.33% - 20px);
+    margin: 0 10px;
+    padding: 0 10px;
+}
+
+.agent-body-input .agent-body-input-content input {
+    width: 100%;
+    height: 33px;
+}
+
+.agent-positive-content {
+    border: 1px solid;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.agent-positive-content h3 {
+    border-bottom: 1px solid;
+    padding: 8px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-positive-bottom {
+    height: 96px;
+}
+
+.agent-order-list li {
+    border-bottom: 1px solid;
+    width: 100%;
+    padding: 5px;
+}
+
+.agent-proud-content {
+    margin-top: 25px;
+}
+
+.agent-proud-content h3 {
+    border-bottom: 1px solid;
+    padding-bottom: 20px;
+    letter-spacing: 3px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-content .agent-proud-container .agent-proud-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 -10px;
+}
+
+.agent-body-container .agent-order-list h3 {
+    text-align: start;
+    letter-spacing: 3px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-inner .agent-proud-left h4 {
+    border-bottom: 1px solid;
+    padding: 6px;
+    letter-spacing: 3px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-inner .agent-proud-right h4 {
+    border-bottom: 1px solid;
+    letter-spacing: 3px;
+    padding: 6px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-container .agent-proud-left {
+    width: calc(50% - 20px);
+    margin: 0 10px;
+    border: 1px solid;
+}
+
+.agent-body-container .agent-feel-container h3 {
+    margin-bottom: 20px;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-container .agent-proud-right {
+    width: calc(50% - 12px);
+    border: 1px solid;
+}
+
+.agent-proud-container .agent-proud-inner .agent-proud-left h3 {
+    border-bottom: 1px solid;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-container .agent-proud-inner .agent-proud-right h3 {
+    border-bottom: 1px solid;
+    font-family: 'Roxborough CF';
+}
+
+.agent-proud-left-inner {
+    padding: 0 10px;
+}
+
+.agent-proud-right-inner {
+    padding: 0 10px;
+}
+
+.agent-proud-inner .agent-proud-left-inner p {
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-proud-inner .agent-proud-right-inner p {
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-proud-left-inner p:last-child {
+    border-bottom: none;
+}
+
+.agent-proud-right-inner p:last-child {
+    border-bottom: none;
+}
+
+.agent-proud-content .agent-proud-container {
+    padding-top: 30px;
+}
+
+.agent-body-container .agent-favorite-container {
+    margin-top: 25px;
+}
+
+.agent-body-container .agent-favorite-container h3 {
+    border-bottom: 1px solid;
+    letter-spacing: 3px;
+    padding-bottom: 20px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-body-container .agent-forword-container h3{
+    padding-bottom: 20px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+/* ---------------SECOND PDF------------------ */
+
+.agent-monthly-left .agent-monthly-left-inner {
+    padding: 0 8px;
+}
+
+.agent-monthly-right .agent-monthly-right-inner {
+    padding: 0 8px;
+}
+
+.agent-body-container .agent-month-section P {
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-monthly-container .agent-monthly-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 -10px;
+    padding-top: 33px;
+}
+
+.agent-monthly-inner .agent-monthly-left {
+    width: calc(50% - 20px);
+    margin: 0 10px;
+    border: 1px solid;
+}
+
+.agent-monthly-inner .agent-monthly-right {
+    width: calc(50% - 12px);
+    border: 1px solid;
+}
+
+.agent-monthly-inner .agent-monthly-left h4 {
+    text-align: center;
+    padding: 8px;
+    border-bottom: 1px solid;
+    letter-spacing: 4px;
+    font-weight: 400;
+    height: 54px;
+    font-family: 'Roxborough CF';
+}
+
+.agent-monthly-inner .agent-monthly-right h4 {
+    text-align: center;
+    padding: 8px;
+    border-bottom: 1px solid;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-monthly-left .agent-monthly-left-inner P {
+    text-align: center;
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-monthly-left .agent-monthly-right-inner p {
+    text-align: center;
+    border-bottom: 1px solid;
+}
+
+.agent-monthly-left .agent-monthly-left-inner P:last-child {
+    border-bottom: none;
+}
+
+.agent-monthly-right .agent-monthly-right-inner P {
+    text-align: center;
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-monthly-right .agent-monthly-right-inner P:last-child {
+    border-bottom: none;
+}
+
+.agent-wrapper-inner .agent-question-container {
+    margin-top: 25px;
+    text-align: center;
+}
+.agent-wrapper-inner .agent-question-container h3{
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+
+.agent-wrapper-inner .agent-question-container p {
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-notes-container {
+    margin-top: 25px;
+    text-align: left;
+}
+.agent-notes-container h3{
+    letter-spacing: 4px;
+    font-style: italic;
+    font-weight: 400;
+}
+
+.agent-notes-container p {
+    border-bottom: 1px solid;
+    padding: 15px;
+}
+
+.agent-wrapper-inner .agent-highlights h3 {
+    text-align: center;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Roxborough CF';
+}
+.agent-wrapper-inner .agent-highlights{
+    margin-top: 30px;
+}
+
+.agent-highlights li {
+    border-bottom: 1px solid;
+    width: 100%;
+    padding: 5px;
+}
+.agent-question-container .confirm-button-content{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.confirm-button-content .confirm-button{
+    width: 153px;
+    height: 43px;
+    border: 1px solid;
+    margin-right: 25px;
+    background: #fff;
+    letter-spacing: 4px;
+    font-weight: 700;
+}
+.agent-header .agent-wrapper-inner-right .agent-date{
+    padding-top: 15px;
+}
+.agent-wrapper-inner{
+    background: url(../image/pdf_bg.png);
+}
