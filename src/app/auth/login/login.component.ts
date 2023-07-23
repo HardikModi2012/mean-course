@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
     if (this.mode === 'create') {
       this.postService.addPost(form.value.title, form.value.content, form.value.image);
     } else {
-      this.postService.updatePost(this.postId, form.value.content, form.value.image);
+      // this.postService.updatePost(this.postId, form.value.content, form.value.image);
     }
     form.reset();
   }

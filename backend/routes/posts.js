@@ -14,7 +14,7 @@ var storage = multer.diskStorage({
     if (isValid) {
       error = null;
     }
-    cb(null, "backend/images");
+    cb(error, "backend/images");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLocaleLowerCase().split(" ").join("-");
@@ -24,17 +24,14 @@ var storage = multer.diskStorage({
 });
 const router = express.Router();
 
-router.post(
-  "",
-  multer({ storage: storage }).single("image"),
-  (req, res, next) => {
+router.post("", multer({ storage: storage }).single("image"), (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
       imagePath: url + "/images/"+ req.file.filename,
     });
-    Post.save().then(createdPost => {
+    post.save().then(createdPost => {
       res.status(201).json({
         message: "Post added successfully",
         // postId: createdPost._id
@@ -50,11 +47,17 @@ router.post(
   }
 );
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", multer({ storage: storage }).single("image"), (req, res, next) => {
+  let imagePath = req.body.image;
+  if(req.file){
+    const url = req.protocol + "://" + req.get("host");
+    imagePath = url + "/images/" + req.file.filename
+  }
   const post = new Post({
     _id: req.body.id,
     title: req.body.title,
     content: req.body.content,
+    imagePath: imagePath
   });
   Post.updateOne({ _id: req.params.id }, post).then((result) => {
     res.status(201).json({
@@ -65,7 +68,6 @@ router.put("/:id", (req, res, next) => {
 
 router.get("", (req, res, next) => {
   Post.find().then((documents) => {
-    console.log("documents", documents);
     res.status(200).json({
       message: "Posts fetch successfully",
       posts: documents,
@@ -90,8 +92,7 @@ router.delete("/:id", (req, res) => {
     _id: req.params.id,
   }).then((response) => {
     res.status(200).json({
-      message: "Post delete successfully",
-      posts: documents,
+      message: "Post delete successfully"
     });
   });
 });

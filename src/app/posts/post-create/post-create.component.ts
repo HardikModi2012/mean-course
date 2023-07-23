@@ -45,9 +45,9 @@ export class PostCreateComponent implements OnInit {
             id: data._id,
             title: data.title,
             content: data.content,
-            imagePath: null
+            imagePath: data.imagePath
           };
-          this.form.setValue({ 'title': this.post.title, 'content': this.post.content })
+          this.form.setValue({ title: this.post.title, content: this.post.content, image: this.post.imagePath  })
         })
       }
       else {
@@ -61,16 +61,16 @@ export class PostCreateComponent implements OnInit {
     this.samplePost = event.value;
   }
 
-  onSelectFile(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.image = file.name;
-      const formData = new FormData();
-      formData.append("thumbnail", file);
-      const upload$ = this.http.post("/api/thumbnail-upload", formData);
-      upload$.subscribe();
-    }
-  }
+  // onSelectFile(event: any) {
+  //   const file: File = event.target.files[0];
+  //   if (file) {
+  //     this.image = file.name;
+  //     const formData = new FormData();
+  //     formData.append("thumbnail", file);
+  //     const upload$ = this.http.post("/api/thumbnail-upload", formData);
+  //     upload$.subscribe();
+  //   }
+  // }
 
   onSavePost() { //form: NgForm
     if (this.form.invalid) {
@@ -91,6 +91,7 @@ export class PostCreateComponent implements OnInit {
     } else {
       this.postService.updatePost(
         this.postId,
+        this.form.value.title,
         this.form.value.content,
         this.form.value.image
         );
@@ -104,7 +105,7 @@ export class PostCreateComponent implements OnInit {
     this.form.get('image').updateValueAndValidity();
     const reader = new FileReader();
     reader.onload = () => {
-      this.imagePreview = reader.result as string;
+      this.imagePreview = reader.result;
     }
     reader.readAsDataURL(file);
   }
