@@ -7,16 +7,16 @@ import { AuthGuard } from "./Core/guards/auth.guard";
 
 
 const routes: Routes = [
-  { path: '', component: PostsListComponent}, // , canActivate: [AuthGuard]
-  { path: 'posts', component: PostsListComponent}, // , canActivate: [AuthGuard]
-  { path: 'create', component: PostCreateComponent},
-  { path: 'edit/:id', component: PostCreateComponent},
-  { path: 'create-course', component: CreateCourseComponent},
-  { path: '**', component: PostsListComponent},
+  { path: '', component: PostsListComponent }, // , canActivate: [AuthGuard]
+  { path: 'posts', component: PostsListComponent }, // , canActivate: [AuthGuard]
+  { path: 'create', component: PostCreateComponent },
+  { path: 'edit/:id', component: PostCreateComponent },
+  { path: 'create-course', component: CreateCourseComponent },
+  { path: '**', component: PostsListComponent },
 ]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule{}
+export class AppRoutingModule { }

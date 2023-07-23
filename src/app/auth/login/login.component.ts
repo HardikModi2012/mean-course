@@ -30,7 +30,12 @@ export class LoginComponent implements OnInit {
         this.isLoading = true;
         this.postService.getPost(this.postId).subscribe((data) => {
           this.isLoading = false;
-          this.post = { id: data._id, title: data.title, content: data.content }
+          this.post = {
+            id: data._id,
+            title: data.title,
+            content: data.content,
+            imagePath: null
+          }
         })
       }
       else {
