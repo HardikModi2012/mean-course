@@ -1,6 +1,5 @@
-<!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
-
-<mat-accordion multi="true" *ngIf="posts.length > 0; else noPost">
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<mat-accordion multi="true" *ngIf="posts.length > 0 && !isLoading">
   <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header>{{post.title}}</mat-expansion-panel-header>
     <!-- <mat-expansion-panel-header>{{post.content}}</mat-expansion-panel-header> -->
@@ -13,6 +12,14 @@
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
-<ng-template #noPost>
+<mat-paginator *ngIf="posts.length > 0" #paginator
+               class="demo-paginator"
+               (page)="handlePageEvent($event)"
+               [length]="totalPosts"
+               [pageSize]="pageSize"
+               [pageSizeOptions]="pageSizeOptions"
+               aria-label="Select page">
+</mat-paginator>
+<ng-template *ngIf="posts.length === 0 && !isLoading">
 <p  class="mat-body-1"> No Posts added yet.</p>
 </ng-template>

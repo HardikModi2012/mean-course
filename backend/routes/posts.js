@@ -24,14 +24,17 @@ var storage = multer.diskStorage({
 });
 const router = express.Router();
 
-router.post("", multer({ storage: storage }).single("image"), (req, res, next) => {
+router.post(
+  "",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      imagePath: url + "/images/"+ req.file.filename,
+      imagePath: url + "/images/" + req.file.filename,
     });
-    post.save().then(createdPost => {
+    post.save().then((createdPost) => {
       res.status(201).json({
         message: "Post added successfully",
         // postId: createdPost._id
@@ -41,38 +44,54 @@ router.post("", multer({ storage: storage }).single("image"), (req, res, next) =
           // title: createdPost.title,
           // content: createdPost.content,
           // imagePath: createdPost.imagePath
-        }
+        },
       });
-    })
+    });
   }
 );
 
-router.put("/:id", multer({ storage: storage }).single("image"), (req, res, next) => {
-  let imagePath = req.body.image;
-  if(req.file){
-    const url = req.protocol + "://" + req.get("host");
-    imagePath = url + "/images/" + req.file.filename
-  }
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-    imagePath: imagePath
-  });
-  Post.updateOne({ _id: req.params.id }, post).then((result) => {
-    res.status(201).json({
-      message: "Post updated successfully",
+router.put(
+  "/:id",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.image;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
     });
-  });
-});
+    Post.updateOne({ _id: req.params.id }, post).then((result) => {
+      res.status(201).json({
+        message: "Post updated successfully",
+      });
+    });
+  }
+);
 
 router.get("", (req, res, next) => {
-  Post.find().then((documents) => {
+  const pageSize = +req.query.pageSize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPost;
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+  postQuery.then(
+    documents => {
+      fetchedPost = documents;
+      return Post.count();
+  }).then(count => {
     res.status(200).json({
       message: "Posts fetch successfully",
-      posts: documents,
+      posts: fetchedPost,
+      maxPosts: count
     });
-  });
+  })
   // res.json(posts);
   // next();
 });
@@ -92,7 +111,7 @@ router.delete("/:id", (req, res) => {
     _id: req.params.id,
   }).then((response) => {
     res.status(200).json({
-      message: "Post delete successfully"
+      message: "Post delete successfully",
     });
   });
 });

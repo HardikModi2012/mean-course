@@ -11,3 +11,11 @@
 .post-image img {
   width: 100%;
 }
+
+mat-spinner{
+  margin: auto;
+}
+
+mat-paginator{
+  margin-top: 1rem;
+}

@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 const material = [
   MatInputModule,
@@ -28,8 +29,8 @@ const material = [
   MatAutocompleteModule,
   MatExpansionModule,
   MatListModule,
-  MatProgressSpinnerModule
-
+  MatProgressSpinnerModule,
+  MatPaginatorModule
 ]
 
 @NgModule({
