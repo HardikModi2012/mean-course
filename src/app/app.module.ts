@@ -16,6 +16,7 @@ import { MatModule } from './appModules/mat.module';
 import { AppRoutingModule } from './appRouting.module';
 import { CreateCourseComponent } from './course-list/create-course/create-course.component';
 import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { LoginComponent } from './auth/login/login.component';
     HeaderComponent,
     PostsListComponent,
     CreateCourseComponent,
-    LoginComponent
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

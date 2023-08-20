@@ -4,12 +4,13 @@ const bodyParser = require("body-parser");
 const { default: mongoose } = require("mongoose");
 
 const postRouters = require("./routes/posts");
+const userRouters = require("./routes/user");
 const app = express();
 
 // Representation State transfer protocol
 mongoose
   .connect(
-    "mongodb+srv://Hardik:mypassmongo@cluster0.ook3zgw.mongodb.net/node-angular?retryWrites=true"
+    "mongodb+srv://Hardik:mypassmongo@cluster0.ook3zgw.mongodb.net/node-angular"
   )
   .then(() => {
     console.log("Connected to database");
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/posts", postRouters);
+app.use("/api/user", userRouters);
 
 // app.use('/api/posts' , (req, res, next) => {
 //   res.send('Hello from res');
