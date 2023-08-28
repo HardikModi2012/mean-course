@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-const user = require('../models/user');
 const router = express.Router();
 
 router.post("/signup", (req, res, next) => {
@@ -21,7 +20,7 @@ router.post("/signup", (req, res, next) => {
             });
         })
         .catch(err => {
-            res.status(400).json({
+            res.status(500).json({
                 error: err
             });
         })
@@ -29,7 +28,7 @@ router.post("/signup", (req, res, next) => {
 })
 
 router.post("/login", (req, res, next) => {
-    let fetchedUser;
+let fetchedUser;
    User.findOne({ email: req.body.email})
    .then(user => {
         if (!user) {
