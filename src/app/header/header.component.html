@@ -5,21 +5,24 @@
   <span>My App</span>
   <span class="spacer"></span>
   <ul>
-    <li>
+    <li *ngIf="isAuthenticated">
       <a mat-button routerLink="/create" routerLinkActive="mat-accent">Add New Post</a>
     </li>
-    <li>
+    <li *ngIf="!isAuthenticated">
       <a mat-button routerLink="/login" routerLinkActive="mat-accent">login</a>
     </li>
-    <li>
-      <a mat-button routerLink="/signup">signup</a>
+    <li *ngIf="!isAuthenticated">
+      <a mat-button routerLink="/signup" routerLinkActive="mat-accent">signup</a>
+    </li>
+    <li *ngIf="isAuthenticated">
+      <button mat-button (click)="logout()">logout</button>
     </li>
   </ul>
-  <span class="example-spacer"></span>
+  <!-- <span class="example-spacer"></span>
   <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
     <mat-icon>favorite</mat-icon>
   </button>
   <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
     <mat-icon>share</mat-icon>
-  </button>
+  </button> -->
 </mat-toolbar>

@@ -9,6 +9,7 @@
       <input matInput name="password" required ngModel type="password" placeholder="password" #passwordInput="ngModel" />
       <mat-error *ngIf="passwordInput.invalid">Please enter a valid password</mat-error>
     </mat-form-field>
-    <button mat-raised-button color="accent" type="submit">Sign up</button>
+    <button mat-raised-button color="accent" type="submit" *ngIf="!isLoading">Sign up</button>
+    <!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
   </form>
 </mat-card>
