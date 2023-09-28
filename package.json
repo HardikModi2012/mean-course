@@ -8,7 +8,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "start:server": "nodemon server.js"
+    "start:server": "nodemon server.js",
+    "watch": "ng build --watch --configuration development",
+    "posttest": "npm run format",
+    "format": "prettier --write \"**/*.{html,yml,ts,tsx,js,css,json,scss,md}\"",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
