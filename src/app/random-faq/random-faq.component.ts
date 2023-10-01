@@ -40,12 +40,12 @@ export class RandomFaqComponent implements OnInit {
     for (let index = 0; index < this.allFaq.length; index++) {
       let element = this.allFaq[index];
 
-      if (element.id == id) {
-        element.active = !element.active;
-      }
-      else {
-        element.active = false;
-      }
+      // if (element.id == id) {
+      //   element.active = !element.active;
+      // }
+      // else {
+      //   element.active = false;
+      // }
 
     }
   }

@@ -18,9 +18,11 @@ import { CreateCourseComponent } from './course-list/create-course/create-course
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthInterceptor } from './auth/signup/auth-interceptor';
+import { ErrorInterceptor } from 'src/error-interceptor';
+import { ErrorComponent } from './error/error.component';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     PostsComponent,
     MessageComponent,
@@ -31,8 +33,9 @@ import { AuthInterceptor } from './auth/signup/auth-interceptor';
     PostsListComponent,
     CreateCourseComponent,
     LoginComponent,
-    SignupComponent
-  ],
+    SignupComponent,
+      ErrorComponent
+   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -43,7 +46,9 @@ import { AuthInterceptor } from './auth/signup/auth-interceptor';
     HttpClientModule,
     MatModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
-  bootstrap: [AppComponent]
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+  {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
+  bootstrap: [AppComponent],
+  entryComponents: [ErrorComponent]
 })
 export class AppModule { }

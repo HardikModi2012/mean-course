@@ -18,7 +18,7 @@ export class PostsService {
     this.http.get<{ message: string, posts: any }>('http://localhost:3000/api/posts'
     ).pipe(map((postData) =>
     {
-      return postData.posts.map((post) => {
+      return postData.posts.map((post: any) => {
         return {
           id: post._id,
           title: post.title,

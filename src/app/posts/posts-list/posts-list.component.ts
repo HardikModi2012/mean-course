@@ -11,10 +11,10 @@ import { AuthService } from "src/app/auth/signup/auth.service";
 export class PostsListComponent implements OnInit, OnDestroy {
   // @Input() posts: Post[] = [];
   posts: Post[] = [];
-  private postSub: Subscription;
+  private postSub!: Subscription;
   isLoading = false;
   isAuthenticated: boolean = false;
-  private authListenerSubs: Subscription;
+  private authListenerSubs!: Subscription;
   constructor(private postService: PostsService, private authS: AuthService) {}
 
   ngOnInit() {
@@ -37,6 +37,7 @@ export class PostsListComponent implements OnInit, OnDestroy {
   editPost() {}
 
   deleteRecord(id: string) {
+    this.isLoading = true;
     this.postService.deletePost(id);
   }
 

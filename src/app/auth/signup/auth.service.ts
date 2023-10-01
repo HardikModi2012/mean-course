@@ -8,7 +8,7 @@ import { Router } from "@angular/router";
   providedIn: "root",
 })
 export class AuthService {
-  private token: string;
+  private token!: string;
   private isAuthenticated: boolean = false;
   private authStatusListener = new Subject<boolean>();
   tokenTimer: any;
@@ -30,8 +30,11 @@ export class AuthService {
     const authData: authData = { email: email, password: password };
     this.http
       .post("http://localhost:3000/api/user/signup", authData)
-      .subscribe((response) => {
-        console.log(response);
+      .subscribe((res: any) => {
+        this.router.navigate(["/"]);
+      },
+      error => {
+        this.authStatusListener.next(false);
       });
   }
 
@@ -59,11 +62,14 @@ export class AuthService {
           this.saveAuthData(token, expirationDate);
           this.router.navigate(["/"]);
         }
+      },
+      error => {
+        this.authStatusListener.next(false);
       });
   }
 
   logOut() {
-    this.token = null;
+    this.token = '';
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);

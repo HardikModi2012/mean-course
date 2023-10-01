@@ -3,6 +3,7 @@ const multer = require("multer");
 
 const Post = require("../models/post");
 const checkAuth = require("../middleware/check-auth");
+const { error } = require("console");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -47,6 +48,11 @@ router.post("", checkAuth, multer({ storage: storage }).single("image"), (req, r
         }
       });
     })
+    .catch(error => {
+      res.status(500).json({
+        message: "Creating a post failed"
+      });
+    })
   }
 );
 
@@ -63,10 +69,21 @@ router.put("/:id", checkAuth, multer({ storage: storage }).single("image"), (req
     imagePath: imagePath
   });
   Post.updateOne({ _id: req.params.id }, post).then((result) => {
-    res.status(201).json({
-      message: "Post updated successfully",
+    if (result.nModified > 0) {
+      res.status(201).json({
+        message: "Post updated successfully.",
+      });
+    }else {
+    res.status(401).json({
+      message: "Not authorized!!",
     });
-  });
+  }
+  })
+  .catch(error => {
+    res.status(500).json({
+      message: "Could not update post"
+    });
+  })
 });
 
 router.get("", (req, res, next) => {
