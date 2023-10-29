@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   path: 'LOCAL',
-  baseAPI: ''
+  baseAPI: '',
+  API_URL: ''
 };
 
 /*
