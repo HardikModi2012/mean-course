@@ -1,0 +1,181 @@
+<ng-container (appUserData)="userData = $event"></ng-container>
+<div class="sub-header" id="sub-header" (onResize)="ds.setSubHeaderHeight()">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <kendo-breadcrumb collapseMode="wrap" [items]="breadcrumbItems" (itemClick)="ds.onBreadcrumbItemClick($event)"></kendo-breadcrumb>
+      </div>
+      <div class="col-auto ms-auto py-3 py-md-1">
+        <button
+          class="btn btn-sm btn-primary"
+          kendoButton
+          *roleGuard="{role: 'CREATE', screenId: currentScreen.id}"
+          (click)="onAddClick()"
+          [attr.accesskey]="accessKey.CREATE"
+        >
+          Add Record
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12 my-4">
+      <kendo-grid
+        [data]="gridData"
+        [pageSize]="paging.pagesize"
+        [skip]="paging.skip"
+        [pageable]="paging.pageable"
+        (pageChange)="onPageChange($event)"
+        [loading]="flags.isTableLoading"
+        [resizable]="true"
+        class="auto-height"
+        #grid="kendoGrid"
+        [columnMenu]="{columnChooser: true, stick: true, sort: false, filter: false}"
+        [sortable]="true"
+      >
+        <ng-template kendoGridLoadingTemplate>
+          <app-loading-grid></app-loading-grid>
+        </ng-template>
+        <ng-template kendoGridNoRecordsTemplate>
+          <app-no-data-grid *ngIf="!flags.isTableLoading"></app-no-data-grid>
+        </ng-template>
+        <ng-template kendoGridToolbarTemplate>
+          <div class="row w-100 mx-0 align-items-center">
+            <div class="col-12 col-sm col-md-4 col-lg-3 px-0 my-2">
+              <app-search-field [(search)]="searchTable" [byUrl]="true" (searchChange)="onFilter()"></app-search-field>
+            </div>
+            <div class="col-auto ms-auto pe-0">
+              <button
+                class="btn btn-sm btn-with-icon my-2 btn-primary"
+                (click)="onGetTableData('LOAD_DATA')"
+                type="button"
+                [attr.accesskey]="ds.accessKey.REFRESH"
+              >
+                <app-svg-icon icon="REFRESH"></app-svg-icon>&nbsp;Refresh
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-sm btn-with-icon my-2 btn-success ms-3"
+                (click)="fetchDataForExcel(grid)"
+                type="button"
+                [attr.accesskey]="ds.accessKey.PRINT_EXCEL"
+              >
+                <app-svg-icon icon="EXCEL"></app-svg-icon>&nbsp;Excel
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-sm btn-with-icon my-2 btn-warning ms-3"
+                (click)="onExportToCsv()"
+                type="button"
+                [attr.accesskey]="ds.accessKey.PRINT_CSV"
+              >
+                <app-svg-icon icon="CSV"></app-svg-icon>&nbsp;CSV
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-sm btn-with-icon my-2 btn-danger ms-3"
+                kendoGridPDFCommand
+                [attr.accesskey]="ds.accessKey.PRINT_PDF"
+              >
+                <app-svg-icon icon="PDF"></app-svg-icon>&nbsp;PDF
+              </button>
+            </div>
+          </div>
+        </ng-template>
+        <kendo-grid-column field="index" title="Action" [width]="165" [minResizableWidth]="165" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-start" kendoTooltip>
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+              <button
+                [disabled]="item.hasChild || (userData?.trasCloseDate ?? '' | isAfterDate : item.requestDate)"
+                class="btn-icon mx-1 link-primary"
+                kendoButton
+                *roleGuard="{role: 'UPDATE', screenId: currentScreen.id}"
+                title="Update"
+                (click)="onEditClick(item)"
+              >
+                <app-svg-icon icon="EDIT"></app-svg-icon>
+              </button>
+              <button class="btn-icon mx-1 link-secondary" kendoButton title="Audit" (click)="onAuditClick(item.docNo)">
+                <app-svg-icon icon="AUDIT"></app-svg-icon>
+              </button>
+              <button
+                [disabled]="item.hasChild || (userData?.trasCloseDate ?? '' | isAfterDate : item.requestDate)"
+                class="btn-icon mx-1 link-danger"
+                kendoButton
+                *roleGuard="{role: 'DELETE', screenId: currentScreen.id}"
+                title="Delete"
+                (click)="onDeleteClick(item)"
+              >
+                <app-svg-icon icon="DELETE"></app-svg-icon>
+              </button>
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <ng-container *ngFor="let header of gridHeaderList">
+          <kendo-grid-column
+            [field]="header.field"
+            [title]="header.title"
+            [autoSize]="false"
+            [width]="header?.width || 100"
+            [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            *ngIf="ds.hideColumn(header)"
+          >
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+              <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+            </ng-template>
+          </kendo-grid-column>
+        </ng-container>
+
+        <kendo-grid-pdf fileName="{{ currentScreen.id }}_LIST.pdf" [allPages]="true" paperSize="A4" [repeatHeaders]="true" [scale]="0.5">
+          <kendo-grid-pdf-margin top="1.5cm" left="0.5cm" right="0.5cm" bottom="1.25cm" style="font-size: 12px"></kendo-grid-pdf-margin>
+          <ng-template kendoGridPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <app-grid-pdf [pageNum]="pageNum" [totalPages]="totalPages"> </app-grid-pdf>
+          </ng-template>
+
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-grid-column
+              [field]="header.field"
+              [title]="header.title"
+              [width]="header?.width || 100"
+              [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            >
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-grid-column>
+          </ng-container>
+        </kendo-grid-pdf>
+
+        <kendo-grid-excel fileName="{{ currentScreen.id }}_LIST.xlsx">
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-excelexport-column
+              [field]="header.field"
+              [title]="header.title"
+              [width]="header.width || 100"
+              [cellOptions]="cellOptions(header)"
+            >
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-excelexport-column>
+          </ng-container>
+        </kendo-grid-excel>
+      </kendo-grid>
+    </div>
+  </div>
+</div>
+
+<div kendoDialogContainer></div>

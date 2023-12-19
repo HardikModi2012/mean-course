@@ -1,0 +1,536 @@
+<ng-container (appUserData)="userData = $event"></ng-container>
+
+LOADING...
+
+<div class="btn-group" *ngIf="!!docNo">
+  <button type="button" class="btn btn-primary ms-3" (click)="openPdfDialog(pdf, 'PRINT')">Delivery Note</button>
+  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="visually-hidden">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'PRINT')">Print</button></li>
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'VIEW')">View</button></li>
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'DOWNLOAD')">Download</button></li>
+  </ul>
+</div>
+
+<div style="position: fixed; opacity: 0; top: 0; z-index: -100; height: 0">
+  <div id="purchase-order-pdf" class="page" #container>
+    <kendo-pdf-export
+      #pdf
+      paperSize="A4"
+      margin="0.35cm"
+      [author]="dnsDetail?.company?.name || '-'"
+      [creator]="dnsDetail?.company?.name || '-'"
+      [fileName]="'Delivery Note ' + dnsDetail?.invoiceDetail?.invoiceNo + '.pdf'"
+      [repeatHeaders]="true"
+      [autoPrint]="true"
+      [scale]="0.73"
+    >
+      <div
+        class="purchase-order-pdf"
+        [style]="{
+          '--heading-height': getHeight(heading),
+          '--page-height': 297 + 'mm',
+          '--margin': 0.35 + 'cm'
+        }"
+      >
+        <div class="row mx-0 mb-2px heading" #heading>
+          <div class="row">
+            <div class="col-auto ps-0">
+              <img [svg]="ds.svg.PedigriTechnologyLogoSVG" alt="Logo Img" height="32px" />
+            </div>
+            <div class="col-auto ps-0">
+              <div class="company">
+                <p class="company-title">{{ dnsDetail?.company?.name }}</p>
+                <p class="company-address">{{ dnsDetail?.company?.address }}</p>
+              </div>
+            </div>
+            <h6 class="po-title">DELIVERY NOTE / PACKING LIST</h6>
+          </div>
+
+          <div class="col-6 px-4px mb-2">
+            <div class="supplier">
+              <div class="supplier-details" #buyerDetail [ngStyle]="{'minHeight.px': deliveryDetails.offsetHeight}">
+                <div class="supplier-name">
+                  <p class="supplier-title px-2 mb-0">Buyer / Bill To</p>
+                  <p class="m-0 px-2 fw-bold">Siemens Healthineers</p>
+                  <p class="m-0 px-2 fw-bold">Siemens Healthcare LLC, DXB, DHCC, Bidg. 40</p>
+                  <span class="ms-2 d-inline-block text-pre-line">{{ dnsDetail?.invoiceDetail?.billTo }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 px-4px mb-2">
+            <div class="po-details" #deliveryDetails [ngStyle]="{'minHeight.px': buyerDetail.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Delivery Note No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.deliveryNoteNo }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="text-start fw-bold">Delivery Note Date</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    <data-format [data]="dnsDetail?.invoiceDetail?.deliveryNoteDate" type="DATE"></data-format>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Invoice No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.invoiceNo }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Sales Order No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.salesOrderNo }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Delivery Order No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.deliveryOrderNo }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Notification #</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.notification }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-6 px-4px mb-2">
+            <div class="po-details" #customerDetails [ngStyle]="{'minHeight.px': courierDetails.offsetHeight}">
+              <div class="supplier-name">
+                <p class="text-start fw-bold mb-0">Ship To</p>
+                <span class="d-inline-block text-pre-line"> {{ dnsDetail?.invoiceDetail?.shipTo }} </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 px-4px mb-2">
+            <div class="po-details" #courierDetails [ngStyle]="{'minHeight.px': customerDetails.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Courier</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.courier }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">AWB No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.awbNo }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Shipment Terms</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.shipmentTerms }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Volume</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.volume }}&nbsp;CCM
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Net Weight</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.netWeight }}&nbsp;KGs
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-6 px-4px mb-2">
+            <div class="po-details" #customerOneDetails [ngStyle]="{'minHeight.px': systemDetails.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="30%" />
+                  <col width="70%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Customer Name</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.customerName }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">System Name</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.systemName }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-6 px-4px mb-2">
+            <div class="po-details" #systemDetails [ngStyle]="{'minHeight.px': customerOneDetails.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">System Material No.</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.systemMaterialNo }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">System Serial No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ dnsDetail?.invoiceDetail?.systemSerialNo }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mx-0">
+          <div class="col-12 px-4px">
+            <table class="table item-details" style="min-width: 775px">
+              <colgroup>
+                <col width="60px" />
+                <col width="20%" />
+                <col width="auto" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="td-b-t td-b-b td-b-r td-b-l align-top text-center">SL. No.</th>
+                  <th class="td-b-t td-b-b td-b-r align-top">Part</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center" colspan="2">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of dnsDetail?.itemData; let index = index">
+                  <tr>
+                    <td class="td-b-r td-b-b td-b-l text-center">{{ index + 1 }}</td>
+                    <td class="td-b-r td-b-b text-pre-line">{{ item?.itemCode }}</td>
+                    <td class="td-b-r td-b-b p-0" colspan="2">
+                      <table class="w-100 m-0">
+                        <colgroup>
+                          <col width="15%" />
+                          <col width="35%" />
+                          <col width="15%" />
+                          <col width="35%" />
+                        </colgroup>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">Description</td>
+                          <td class="td-b-b text-pre-line" colspan="3">{{ item?.description }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">Qty</td>
+                          <td class="td-b-b">
+                            <data-format [data]="item?.qty" type="NUMBER" [decimal]="0"></data-format>
+                          </td>
+                          <td class="td-b-r td-b-b td-b-l fw-bold">Serial No.</td>
+                          <td class="td-b-b">{{ item?.serialNo }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">Batch No.</td>
+                          <td class="td-b-b">{{ item?.batchNo }}</td>
+                          <td class="td-b-r td-b-b td-b-l fw-bold">Original PO</td>
+                          <td class="td-b-b">{{ item?.originalPo }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">Order Type</td>
+                          <td class="td-b-b" colspan="3">{{ item?.orderType }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">SAP No.</td>
+                          <td class="td-b-r td-b-b">{{ item?.sapNo }}</td>
+                          <td class="td-b-r td-b-b fw-bold">Returnable</td>
+                          <td class="td-b-b">{{ item?.returnable }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r td-b-b fw-bold">COO</td>
+                          <td class="td-b-r td-b-b">{{ item?.coo }}</td>
+                          <td class="td-b-r td-b-b fw-bold">HS Code</td>
+                          <td class="td-b-b">{{ item?.hsCode }}</td>
+                        </tr>
+                        <tr>
+                          <td class="td-b-r fw-bold">Dimension (CM)</td>
+                          <td class="td-b-r">{{ item?.dimension || '-' }}</td>
+                          <td class="td-b-r fw-bold">Weight</td>
+                          <td class="">{{ item?.weight }} KGs</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td class="td-b-r td-b-l h-100">&nbsp;</td>
+                  <td class="td-b-r">&nbsp;</td>
+                  <td class="td-b-r" colspan="2">&nbsp;</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="td-b-t td-b-l fw-bold text-start" colspan="3">
+                    TOTAL QUANTITY {{ dnsDetail?.invoiceDetail?.amountInWords?.toLocaleUpperCase() }} ONLY
+                  </td>
+                  <td class="td-b-t td-b-r fw-bold text-end">
+                    Total Qty <data-format [data]="dnsDetail?.invoiceDetail?.totalQty" type="NUMBER" [decimal]="0"></data-format>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-b-t td-b-r td-b-l" colspan="4">
+                    <div class="row mx-0">
+                      <div class="col-12 px-0">
+                        <p class="mb-1"><span class="fw-bold"> Terms & Conditions:</span></p>
+                        <p class="mb-1">{{ paymentRemarks }}</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-b-b td-b-r td-b-l word-break p-0" colspan="4">
+                    <div class="row mx-0">
+                      <div class="col-4 px-2">
+                        <div class="row mx-0">
+                          <div class="col-12 px-0">
+                            <p class="mb-2">Received the above items:</p>
+                          </div>
+                          <div class="col-5 px-0">
+                            <p class="mb-2">Received By :</p>
+                          </div>
+                          <div class="col-7 px-0">
+                            <p class="m-0">&nbsp;</p>
+                          </div>
+                          <div class="col-5 px-0">
+                            <p class="mb-2">Name :</p>
+                          </div>
+                          <div class="col-7 px-0">
+                            <p class="m-0">&nbsp;</p>
+                          </div>
+                          <div class="col-5 px-0">
+                            <p class="mb-2">Date :</p>
+                            <p class="my-0">&nbsp;</p>
+                          </div>
+                          <div class="col-7 px-0">
+                            <p class="m-0">&nbsp;</p>
+                            <p class="my-0">&nbsp;</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-3 px-2 text-center ms-10 mt-auto">
+                        <div class="ms-auto">
+                          <p class="m-0">&nbsp;</p>
+                          <p class="signature-line m-0"></p>
+                          <p class="me-auto my-0 fw-bold mb-2">Delivered By</p>
+                        </div>
+                      </div>
+                      <div class="col-5 px-2 text-end ms-auto mt-auto">
+                        <div class="ms-auto">
+                          <p class="m-0">&nbsp;</p>
+                          <p class="signature-line m-0"></p>
+                          <p class="me-auto my-0 fw-bold mb-2">For {{ dnsDetail?.company?.name }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <ng-template kendoPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <!-- <div class="purchase-order-pdf-header purchase-order-pdf">
+              <div class="row mx-0">
+                <div class="col-auto ps-0"><img [svg]="ds.svg.PedigriTechnologyLogoSVG" alt="Logo Img" height="32px" /></div>
+                <div class="col-auto ps-0">
+                  <div class="company">
+                    <p class="company-title">{{ dnsDetail?.company?.name }}</p>
+                    <p class="company-address">{{ dnsDetail?.company?.address }}</p>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <h6 class="header-title">DELIVERY NOTE / PACKING LIST</h6>
+                </div>
+                <div class="col-6 px-4px mb-2">
+                  <div class="supplier">
+                    <div class="supplier-details" #buyerDetail [ngStyle]="{'minHeight.px': deliveryDetails.offsetHeight}">
+                      <div class="supplier-name">
+                        <p class="supplier-title px-2 mb-0">Buyer / Bill To</p>
+                        <p class="m-0 px-2 fw-bold">Siemens Healthineers</p>
+                        <p class="m-0 px-2 fw-bold">Siemens Healthcare LLC, DXB, DHCC, Bidg. 40</p>
+                        <span class="ms-2 d-inline-block text-pre-line">{{ dnsDetail?.invoiceDetail?.billTo }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 px-4px mb-2">
+                  <div class="po-details" #deliveryDetails [ngStyle]="{'minHeight.px': buyerDetail.offsetHeight}">
+                    <table class="table m-0">
+                      <colgroup>
+                        <col width="45%" />
+                        <col width="55%" />
+                      </colgroup>
+                      <tr>
+                        <td class="text-start fw-bold">Delivery Note No</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.deliveryNoteNo }}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td class="text-start fw-bold">Delivery Note Date</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          <data-format [data]="dnsDetail?.invoiceDetail?.deliveryNoteDate" type="DATE"></data-format>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Invoice No</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.invoiceNo }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Sales Order No</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.salesOrderNo }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Delivery Order No</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.deliveryOrderNo }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Notification #</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.notification }}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="col-6 px-4px mb-2">
+                  <div class="po-details" #customerDetails [ngStyle]="{'minHeight.px': courierDetails.offsetHeight}">
+                    <div class="supplier-name">
+                      <p class="text-start fw-bold mb-0">Ship To</p>
+                      <span class="d-inline-block text-pre-line"> {{ dnsDetail?.invoiceDetail?.shipTo }} </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 px-4px mb-2">
+                  <div class="po-details" #courierDetails [ngStyle]="{'minHeight.px': customerDetails.offsetHeight}">
+                    <table class="table m-0">
+                      <colgroup>
+                        <col width="45%" />
+                        <col width="55%" />
+                      </colgroup>
+                      <tr>
+                        <td class="text-start fw-bold">Courier</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.courier }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">AWB No</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.awbNo }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Shipment Terms</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.shipmentTerms }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Volume</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.volume }}&nbsp;CCM
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">Net Weight</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.netWeight }}&nbsp;KGs
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="col-6 px-4px mb-2">
+                  <div class="po-details" #customerOneDetails [ngStyle]="{'minHeight.px': systemDetails.offsetHeight}">
+                    <table class="table m-0">
+                      <colgroup>
+                        <col width="30%" />
+                        <col width="70%" />
+                      </colgroup>
+                      <tr>
+                        <td class="text-start fw-bold">Customer Name</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.customerName }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-start fw-bold">System Name</td>
+                        <td class="text-start">
+                          <span class="d-print-inline-block py-0">:</span>
+                          {{ dnsDetail?.invoiceDetail?.systemName }}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="purchase-order-pdf-footer">
+              <div class="row">
+                <p class="col-auto">Date:&nbsp;<data-format [data]="ds.currentDateTime()" type="DATE_TIME"></data-format></p>
+                <p class="col-auto ps-0">Printed By:&nbsp;{{ dnsDetail?.printedBy }}</p>
+                <p class="col-auto ms-auto ps-0">Page {{ pageNum }} of {{ totalPages }}</p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </kendo-pdf-export>
+  </div>
+</div>

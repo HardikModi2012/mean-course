@@ -1,0 +1,309 @@
+<div class="btn-group" *ngIf="openAs !== 'EXTERNAL_VIEW'">
+  <button type="button" class="btn btn-primary ms-3" (click)="openPdfDialog(pdf, 'PRINT')">Export</button>
+  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="visually-hidden">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'PRINT')">Print</button></li>
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'VIEW')">View</button></li>
+    <li><button kendo-button type="button" class="dropdown-item" (click)="openPdfDialog(pdf, 'DOWNLOAD')">Download</button></li>
+  </ul>
+</div>
+
+<div style="position: fixed; opacity: 0; top: 0; z-index: -100; height: 0">
+  <div id="purchase-order-pdf" class="page" #container>
+    <kendo-pdf-export
+      #pdf
+      paperSize="A4"
+      margin="0.35cm"
+      [author]="poDetail?.company?.name || '-'"
+      [creator]="poDetail?.company?.name || '-'"
+      [fileName]="'Commercial Invoice ' + poDetail?.invoiceDetail?.invoiceNo + '.pdf'"
+      [repeatHeaders]="true"
+      [autoPrint]="true"
+      [scale]="0.73"
+    >
+      <div
+        class="purchase-order-pdf"
+        [style]="{
+          '--heading-height': getHeight(heading),
+          '--page-height': 297 + 'mm',
+          '--margin': 0.35 + 'cm'
+        }"
+      >
+        <div class="row mx-0 mb-2px" #heading>
+          <div class="row">
+            <div class="col-auto ps-0">
+              <img [svg]="ds.svg.PedigriTechnologyLogoSVG" alt="Logo Img" height="32px" />
+            </div>
+            <div class="col-auto ps-0">
+              <div class="company">
+                <p class="company-title">{{ poDetail?.company?.name }}</p>
+                <p class="company-address">{{ poDetail?.company?.address }}</p>
+              </div>
+            </div>
+            <h6 class="po-title">COMMERCIAL INVOICE</h6>
+          </div>
+
+          <div class="col-6 px-4px mb-2">
+            <div class="supplier">
+              <div class="supplier-details" #buyerDetail [ngStyle]="{'minHeight.px': invoiceDetails.offsetHeight}">
+                <div class="supplier-name">
+                  <p class="supplier-title px-2 mb-0">Buyer / Bill To</p>
+                  <p class="m-0 px-2 fw-bold">{{ poDetail?.invoiceDetail?.customerName }}</p>
+                  <span class="ms-2 d-inline-block text-pre-line"> {{ poDetail?.invoiceDetail?.customerAddress }} </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 px-4px">
+            <div class="po-details" #invoiceDetails [ngStyle]="{'minHeight.px': buyerDetail.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Invoice No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.invoiceNo || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Invoice Date</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:&nbsp;</span>
+                    <data-format [data]="poDetail?.invoiceDetail?.invoiceDate" type="DATE"></data-format>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Demo Period</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.demoPeriod || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Delivery Note No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.deliveryNoteNo || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Order No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.orderNo || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Order Ref.</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.rmaNo || '-' }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-6 px-4px">
+            <div class="po-details" #customerDetails [ngStyle]="{'minHeight.px': courierDetails.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Customer ID: {{ poDetail?.invoiceDetail?.customerId || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Ship To</td>
+                  <td class="text-start"></td>
+                </tr>
+                <tr>
+                  <td class="text-start text-pre-line" colspan="2">{{ poDetail?.invoiceDetail?.footNotes || '-' }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-6 px-4px">
+            <div class="po-details" #courierDetails [ngStyle]="{'minHeight.px': customerDetails.offsetHeight}">
+              <table class="table m-0">
+                <colgroup>
+                  <col width="45%" />
+                  <col width="55%" />
+                </colgroup>
+                <tr>
+                  <td class="text-start fw-bold">Courier</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.courier || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Courier Account</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.courierAcNo || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">AWB No</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.awbNo || '-' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Volume</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.volume || '-' }}&nbsp;CCM
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-start fw-bold">Net Weight</td>
+                  <td class="text-start">
+                    <span class="d-print-inline-block py-0">:</span>
+                    {{ poDetail?.invoiceDetail?.netWeight || '-' }}&nbsp;KGs
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mx-0">
+          <div class="col-12 px-4px">
+            <table class="table item-details">
+              <colgroup>
+                <col width="60px" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="td-b-t td-b-b td-b-r td-b-l align-top text-center">SL. No.</th>
+                  <th class="td-b-t td-b-b td-b-r align-top">Item Code</th>
+                  <th class="td-b-t td-b-b td-b-r align-top" colspan="3">Item Description</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center">COO</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center">HS Code</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center text-nowrap">Qty</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center">Unit Rate [{{ poDetail?.invoiceDetail?.curCode }}]</th>
+                  <th class="td-b-t td-b-b td-b-r align-top text-center">Amount [{{ poDetail?.invoiceDetail?.curCode }}]</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of poDetail?.itemData; let index = index">
+                  <td class="td-b-r td-b-l text-center">{{ index + 1 }}</td>
+                  <td class="td-b-r">{{ item?.itemCode }}</td>
+                  <td class="td-b-r text-pre-line" colspan="3">{{ item?.itemDesc || '-' }}</td>
+                  <td class="td-b-r text-center text-nowrap">{{ item?.coo }}</td>
+                  <td class="td-b-r text-end text-nowrap">{{ item?.hsCode }}</td>
+                  <td class="td-b-r text-end text-nowrap">{{ item?.itemQty }}</td>
+                  <td class="td-b-r text-end text-nowrap">
+                    <data-format [data]="item?.unitRate" type="NUMBER" [decimal]="ds.foreignCurrencyDecimal"></data-format>
+                  </td>
+                  <td class="td-b-r text-end text-nowrap">
+                    <data-format [data]="item?.amount" type="NUMBER" [decimal]="ds.foreignCurrencyDecimal"></data-format>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="td-b-r td-b-l h-100">&nbsp;</td>
+                  <td class="td-b-r">&nbsp;</td>
+                  <td class="td-b-r" colspan="3">&nbsp;</td>
+                  <td class="td-b-r text-end">&nbsp;</td>
+                  <td class="td-b-r text-end">&nbsp;</td>
+                  <td class="td-b-r text-end">&nbsp;</td>
+                  <td class="td-b-r text-end">&nbsp;</td>
+                  <td class="td-b-r text-end">&nbsp;</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="td-b-t td-b-l fw-bold text-end mt-2" colspan="7"></td>
+                  <td class="td-b-t fw-bold text-end">
+                    <div class="mb-2px">
+                      <data-format [data]="poDetail?.invoiceDetail?.totalQty" type="NUMBER" [decimal]="0"></data-format>
+                    </div>
+                  </td>
+                  <td class="td-b-t td-b-r fw-bold" colspan="2"></td>
+                </tr>
+                <tr>
+                  <td class="td-b-t td-b-l align-top" colspan="8">
+                    <span class="fw-bold">Amount in [{{ ds.baseCurrencyConstant }}]: &nbsp;</span> <br />
+                    {{ poDetail?.invoiceDetail?.amountInWords || '-' }} only
+                  </td>
+                  <td class="td-b-t fw-bold align-top" style="word-break: break-word">
+                    <div class="row mx-0">
+                      <div class="mb-2px px-0">Net Amount ({{ poDetail?.invoiceDetail?.curCode || '-' }}) &nbsp;</div>
+                    </div>
+                  </td>
+                  <td class="td-b-t td-b-r fw-bold text-end">
+                    <div class="mb-2px">
+                      <data-format
+                        [data]="poDetail?.invoiceDetail?.totalAmtAED"
+                        type="NUMBER"
+                        [decimal]="ds.baseCurrencyDecimal"
+                      ></data-format>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-b-t td-b-r td-b-l" colspan="10">
+                    <div class="row mx-0">
+                      <div class="col-12 px-0">
+                        <p class="mb-0"><span class="fw-bold"> Remarks:</span> {{ poDetail?.invoiceDetail?.paymentRemarks }}</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-b-t td-b-r td-b-l" colspan="10">
+                    <div class="row mx-0">
+                      <div class="col-12 px-0">
+                        <p class="mb-0"><span class="fw-bold"> Terms:</span></p>
+                        <p class="mb-0">{{ paymentRemarks }}</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-b-b td-b-r td-b-l word-break p-0" colspan="10">
+                    <div class="row mx-0">
+                      <div class="col-6 px-2"></div>
+                      <div class="col-5 px-2 text-end ms-auto mt-5">
+                        <div class="ms-auto">
+                          <p class="m-0">&nbsp;</p>
+                          <p class="signature-line m-0"></p>
+                          <p class="me-auto my-0 fw-bold mb-2">For {{ poDetail?.company?.name }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <ng-template kendoPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <div class="purchase-order-pdf-footer">
+              <div class="row">
+                <p class="col-auto">Date:&nbsp;<data-format [data]="ds.currentDateTime()" type="DATE_TIME"></data-format></p>
+                <p class="col-auto ps-0">Printed By:&nbsp;{{ poDetail?.invoiceDetail?.userName }}</p>
+                <p class="col-auto ms-auto ps-0">Page {{ pageNum }} of {{ totalPages }}</p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </kendo-pdf-export>
+  </div>
+</div>

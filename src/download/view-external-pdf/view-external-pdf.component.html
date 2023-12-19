@@ -1,0 +1,36 @@
+LOADING...
+
+<app-commercial-invoice-export-pdf
+  *ngIf="openPdf && this.page === 'sales-commercial-invoice'"
+  [divisionCode]="data?.divisionCode"
+  [invoiceNo]="data?.invoiceNo"
+  [openAs]="'EXTERNAL_VIEW'"
+></app-commercial-invoice-export-pdf>
+
+<app-philips-delivery-note
+  *ngIf="openPdf && this.page === 'philips-delivery-note'"
+  [divisionCode]="data?.divisionCode"
+  [invoiceNo]="data?.invoiceNo"
+  [openAs]="'EXTERNAL_VIEW'"
+></app-philips-delivery-note>
+
+<app-delivery-note-pdf
+  *ngIf="openPdf && this.page === 'delivery-note-pdf'"
+  [divisionCode]="data?.divisionCode"
+  [invoiceNo]="data?.invoiceNo"
+  [openAs]="'EXTERNAL_VIEW'"
+></app-delivery-note-pdf>
+
+<app-demo-delivery-note-pdf
+  *ngIf="openPdf && this.page === 'demo-delivery-note-pdf'"
+  [divisionCode]="data?.divisionCode"
+  [invoiceNo]="data?.invoiceNo"
+  [openAs]="'EXTERNAL_VIEW'"
+></app-demo-delivery-note-pdf>
+
+<app-demo-commercial-invoice-export-pdf
+  *ngIf="openPdf && this.page === 'demo-commercial-invoice'"
+  [divisionCode]="data?.divisionCode"
+  [invoiceNo]="data?.invoiceNo"
+  [openAs]="'EXTERNAL_VIEW'"
+></app-demo-commercial-invoice-export-pdf>

@@ -1,0 +1,1070 @@
+<!-- Add or Update Items Dialog -->
+<ng-container (appUserData)="userData = $event"></ng-container>
+<kendo-dialog [title]="title" s (close)="onClose()" [maxWidth]="'96%'" [maxHeight]="'90vh'" [width]="'100%'">
+  <form class="row" #f="ngForm" appScrollToInvalid>
+    <div class="col-12 text-end mb-3" *ngIf="['READ'].includes(popupMode)">
+      <ng-container *roleGuard="{role: 'PRINT', screenId: currentScreen.id}">
+        <app-demo-delivery-note-pdf [divisionCode]="userData?.divisionCode" [invoiceNo]="formData.docNo"></app-demo-delivery-note-pdf>
+      </ng-container>
+      <ng-container *roleGuard="{role: 'PRINT', screenId: currentScreen.id}">
+        <app-demo-invoice-print [divisionCode]="userData?.divisionCode" [invoiceNo]="formData.docNo"></app-demo-invoice-print>
+      </ng-container>
+      <ng-container *roleGuard="{role: 'PRINT', screenId: currentScreen.id}">
+        <app-demo-commercial-invoice-export-pdf
+          [divisionCode]="userData?.divisionCode"
+          [invoiceNo]="formData.docNo"
+        ></app-demo-commercial-invoice-export-pdf>
+      </ng-container>
+      <!-- <ng-container *ngIf="flags.showIfPhilipsVendor()">
+        <app-philips-delivery-note [divisionCode]="userData?.divisionCode" [invoiceNo]="formData.docNo"></app-philips-delivery-note>
+      </ng-container> -->
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="divisionCodeRef" class="form-label required" text="Division"></kendo-label>
+        <kendo-combobox
+          id="divisionCode"
+          name="divisionCode"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: divisionCodeRef,
+            compModel: divisionCode,
+            type: 'DIVISION',
+            inActive: ['CREATE'].includes(popupMode),
+            provideData: comboData['DIVISION']
+          }"
+          (comboData)="comboData['DIVISION'] = $event; setDefaultDivision($event)"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.divisionCode"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #divisionCode="ngModel"
+          #divisionCodeRef
+          [disabled]="true"
+          required
+        >
+        </kendo-combobox>
+        <form-error text="Division" [model]="divisionCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="vendorRef" class="form-label required" text="Vendor"></kendo-label>
+        <kendo-combobox
+          id="vendor"
+          name="vendor"
+          [allowCustom]="false"
+          [appCombobox]="{compRef: vendorRef, type: 'VENDOR', inActive: ['CREATE'].includes(popupMode)}"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.vendor"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #vendor="ngModel"
+          #vendorRef
+          required
+          [disabled]="true"
+        >
+        </kendo-combobox>
+        <form-error text="Vendor" [model]="vendor"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="brandCodeRef" class="form-label required" text="Brand"></kendo-label>
+        <kendo-combobox
+          id="brandCode"
+          name="brandCode"
+          [appCombobox]="{
+            compModel: brandCode,
+            compRef: brandCodeRef,
+            inActive: ['CREATE'].includes(popupMode),
+            type: 'BRAND'
+          }"
+          [filterData]="divisionCodeRef.dataItem?.code?.vendor"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [allowCustom]="false"
+          [disabled]="['READ'].includes(popupMode)"
+          (comboData)="setDefaultBrand($event)"
+          [(ngModel)]="formData.brandCode"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #brandCode="ngModel"
+          #brandCodeRef
+          required
+        >
+        </kendo-combobox>
+        <form-error text="Brand" [model]="brandCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="docNoRef" class="form-label required" text="Invoice No."> </kendo-label>
+        <kendo-textbox
+          id="docNo"
+          name="docNo"
+          [(ngModel)]="formData.docNo"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #docNo="ngModel"
+          #docNoRef
+          [maxlength]="8"
+          [disabled]="true"
+          required
+        >
+        </kendo-textbox>
+        <form-error text="Invoice No." [model]="docNo"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="docDateRef" class="form-label" text="Invoice Date"></kendo-label>
+        <kendo-datepicker
+          adaptiveMode="auto"
+          calendarType="infinite"
+          id="docDate"
+          name="docDate"
+          [incompleteDateValidation]="true"
+          [(ngModel)]="formData.docDate"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          placeholder="DD/MM/YYYY"
+          format="dd/MM/yyyy"
+          [formatPlaceholder]="ds.dateFormatPlaceholder"
+          #docDate="ngModel"
+          #docDateRef
+          required
+          [disabled]="!userData?.isDateChanges || ['READ'].includes(popupMode)"
+        >
+        </kendo-datepicker>
+        <form-error text="Invoice Date" [model]="docDate"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="orderRefRef" class="form-label required" text="Order Ref."> </kendo-label>
+        <kendo-textbox
+          id="orderRef"
+          name="orderRef"
+          [(ngModel)]="formData.orderRef"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #orderRef="ngModel"
+          #orderRefRef
+          [maxlength]="30"
+          [disabled]="['READ'].includes(popupMode)"
+          required
+        >
+        </kendo-textbox>
+        <form-error text="Order Ref." [model]="orderRef"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="orderReceivedDateRef" class="form-label required" text="Order Received Date"></kendo-label>
+        <kendo-datetimepicker
+          adaptiveMode="auto"
+          calendarType="infinite"
+          id="orderReceivedDate"
+          name="orderReceivedDate"
+          [incompleteDateValidation]="true"
+          [(ngModel)]="formData.orderReceivedDate"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          placeholder="DD/MM/YYYY HH/MM/SS"
+          format="dd/MM/yyyy HH:mm:ss"
+          [cancelButton]="true"
+          [disabled]="['READ'].includes(popupMode)"
+          [formatPlaceholder]="ds.dateFormatPlaceholder"
+          [popupSettings]="{appendTo: 'root'}"
+          [max]="ds.currentEndMonth()"
+          [disabledDates]="ds.disabledFutureDates"
+          #orderReceivedDate="ngModel"
+          #orderReceivedDateRef
+          required
+        >
+        </kendo-datetimepicker>
+        <form-error
+          text="Order Received Date"
+          [model]="orderReceivedDate"
+          [message]="{
+            disabledDate: 'Future date and Time not allowed',
+            maxError: 'Future date and Time not allowed'
+          }"
+        >
+        </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 row mx-0">
+      <fieldset class="col-12 col-md row fieldset mx-0 my-3">
+        <legend>Customer Details</legend>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="customerCodeRef" class="form-label required" text="Search Customer"> </kendo-label>
+            <kendo-combobox
+              id="customerCode"
+              name="customerCode"
+              [allowCustom]="false"
+              [appCombobox]="{
+                compRef: customerCodeRef,
+                compModel: customerCode,
+                type: 'SUPPLIER_VENDOR',
+                provideData: comboData['SUPPLIER_VENDOR'],
+                inActive: ['CREATE'].includes(popupMode)
+              }"
+              [callApiOnDataChange]="{
+                divisionCode: formData.divisionCode,
+                vendorCode: formData.vendor,
+                transactionType: currentScreen.transType,
+                isCustomer: true
+              }"
+              (comboData)="comboData['SUPPLIER_VENDOR'] = $event"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              [(ngModel)]="formData.customerCode"
+              (ngModelChange)="setCustomerDetail(customerCodeRef)"
+              [maxlength]="7"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #customerCode="ngModel"
+              #customerCodeRef
+              required
+              [disabled]="['READ'].includes(popupMode)"
+            >
+            </kendo-combobox>
+            <form-error text="Search Customer" [model]="customerCode"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 row mx-0 px-0">
+          <div class="col-12 col-sm-6 mb-3">
+            <kendo-formfield>
+              <kendo-label [for]="currencyCodeRef" class="form-label required" text="Currency"></kendo-label>
+              <kendo-combobox
+                id="currencyCode"
+                name="currencyCode"
+                [allowCustom]="false"
+                [appCombobox]="{
+                  compRef: currencyCodeRef,
+                  compModel: currencyCode,
+                  type: 'CURRENCY',
+                  inActive: ['CREATE'].includes(popupMode),
+                  provideData: comboData['CURRENCY']
+                }"
+                (comboData)="comboData['CURRENCY'] = $event; setCurrency($event)"
+                (ngModelChange)="onCurrencyCodeChange(currencyCodeRef?.dataItem?.code?.exchangeRate)"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [(ngModel)]="formData.currencyCode"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #currencyCode="ngModel"
+                #currencyCodeRef
+                [disabled]="true"
+                required
+              >
+              </kendo-combobox>
+              <form-error text="Currency" [model]="currencyCode"> </form-error>
+            </kendo-formfield>
+          </div>
+
+          <div class="col-12 col-sm-6 mb-3">
+            <kendo-formfield>
+              <kendo-label [for]="exchangeRateRef" class="form-label required" text="Currency Rate"></kendo-label>
+              <kendo-textbox
+                id="exchangeRate"
+                name="exchangeRate"
+                class="w-100 no-validate"
+                [(ngModel)]="formData.exchangeRate"
+                #exchangeRate="ngModel"
+                #exchangeRateRef
+                [disabled]="true"
+              >
+              </kendo-textbox>
+              <form-error text="Currency Rate" [model]="exchangeRate"> </form-error>
+            </kendo-formfield>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="custNameRef" class="form-label required" text="Customer Name"> </kendo-label>
+            <kendo-textbox
+              id="custName"
+              name="custName"
+              [(ngModel)]="formData.custName"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #custName="ngModel"
+              #custNameRef
+              [maxlength]="100"
+              [disabled]="['READ'].includes(popupMode) || flags.custNameDisabled"
+              required
+            >
+            </kendo-textbox>
+            <kendo-formerror *ngIf="custName.invalid && custName.errors">
+              <span *ngIf="custName.errors['required']">Customer Name is required.</span>
+            </kendo-formerror>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="contactPersonRef" class="form-label required" text="Contact Person"> </kendo-label>
+            <kendo-textbox
+              id="contactPerson"
+              name="contactPerson"
+              [(ngModel)]="formData.contactPerson"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #contactPerson="ngModel"
+              #contactPersonRef
+              [maxlength]="100"
+              [disabled]="['READ'].includes(popupMode)"
+              required
+            >
+            </kendo-textbox>
+            <form-error text="Contact Person" [model]="contactPerson"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="contactNoRef" class="form-label required" text="Contact No."> </kendo-label>
+            <kendo-textbox
+              id="contactNo"
+              name="contactNo"
+              [(ngModel)]="formData.contactNo"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #contactNo="ngModel"
+              #contactNoRef
+              [maxlength]="50"
+              [disabled]="['READ'].includes(popupMode)"
+              required
+            >
+            </kendo-textbox>
+            <form-error text="Contact No." [model]="contactNo"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <app-map-popup
+            name="area"
+            text="Area/ Location"
+            [rows]="4"
+            [(ngModel)]="formData.area"
+            (latLongChange)="setDistance()"
+            #area="ngModel"
+            #areaRef
+            [required]="true"
+            [maxLength]="250"
+            [(latitude)]="+formData.custLatitude"
+            [(longitude)]="+formData.custLongitude"
+            [disabled]="['READ'].includes(popupMode)"
+          >
+          </app-map-popup>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="latitudeRef" class="form-label required" text="Latitude"></kendo-label>
+            <kendo-numerictextbox
+              id="latitude"
+              name="latitude"
+              [(ngModel)]="+formData.custLatitude"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #latitude="ngModel"
+              #latitudeRef
+              required
+              [spinners]="false"
+              [changeValueOnScroll]="false"
+              [min]="-90"
+              [max]="90"
+              [autoCorrect]="true"
+              [decimals]="6"
+              [maxlength]="50"
+              [format]="{minimumFractionDigits: 0, maximumFractionDigits: ds.formatNumericTextbox(latitude.value)}"
+              [disabled]="true"
+            >
+            </kendo-numerictextbox>
+            <form-error text="Latitude" [model]="latitude"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="longitudeRef" class="form-label required" text="Longitude"></kendo-label>
+            <kendo-numerictextbox
+              id="longitude"
+              name="longitude"
+              [(ngModel)]="+formData.custLongitude"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #longitude="ngModel"
+              #longitudeRef
+              required
+              [spinners]="false"
+              [changeValueOnScroll]="false"
+              [min]="-180"
+              [max]="180"
+              [autoCorrect]="true"
+              [decimals]="6"
+              [maxlength]="50"
+              [format]="{minimumFractionDigits: 0, maximumFractionDigits: ds.formatNumericTextbox(longitude.value)}"
+              [disabled]="true"
+            >
+            </kendo-numerictextbox>
+            <form-error text="Longitude" [model]="longitude"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="customerAddressRef" class="form-label required" text="Address"></kendo-label>
+            <kendo-textarea
+              id="customerAddress"
+              name="customerAddress"
+              [(ngModel)]="formData.custAddress"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #customerAddress="ngModel"
+              #customerAddressRef
+              [rows]="4"
+              required
+              [maxlength]="500"
+              [disabled]="['READ'].includes(popupMode)"
+            >
+            </kendo-textarea>
+            <form-error text="Address" [model]="customerAddress"> </form-error>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="custEmailRef" class="form-label required" text="Email"></kendo-label>
+            <kendo-textarea
+              id="custEmail"
+              name="custEmail"
+              [(ngModel)]="formData.custEmail"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #custEmail="ngModel"
+              #custEmailRef
+              required
+              [pattern]="pattern"
+              [disabled]="['READ'].includes(popupMode)"
+              [maxlength]="250"
+            >
+            </kendo-textarea>
+            <kendo-formerror *ngIf="custEmail.invalid && custEmail.errors">
+              <span *ngIf="custEmail.errors['required']">Email is required.</span>
+              <span *ngIf="custEmail.errors['pattern']">Email with Semicolon(;) separated required ie. abc@xyz.com;pqr@mno.com</span>
+            </kendo-formerror>
+          </kendo-formfield>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="stockLocationCodeRef" class="form-label required" text="Stock Location"></kendo-label>
+        <kendo-combobox
+          id="stockLocationCode"
+          name="stockLocationCode"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: stockLocationCodeRef,
+            compModel: stockLocationCode,
+            type: 'STOCK_DETAIL_STOCK_LOCATION',
+            provideData: comboData['STOCK_DETAIL_STOCK_LOCATION'],
+            inActive: ['CREATE'].includes(popupMode)
+          }"
+          [callApiOnDataChange]="{vendorCode: formData.vendor}"
+          (comboData)="comboData['STOCK_DETAIL_STOCK_LOCATION'] = $event; setDefaultLocation($event, stockLocationCodeRef)"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.stockLocationCode"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #stockLocationCode="ngModel"
+          #stockLocationCodeRef
+          [disabled]="true"
+          required
+        >
+        </kendo-combobox>
+        <form-error text="Stock Location" [model]="stockLocationCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <!-- <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 row mx-0 px-0"> -->
+    <!-- <div class="col-auto ps-0" *ngIf="formData.deliveryModeCode === '01'">
+        <kendo-formfield>
+          <kendo-label [for]="isIntegratedRef" class="form-label" text="Export DHL"></kendo-label>
+          <kendo-switch
+            id="isIntegrated"
+            class="kendo-switch-success"
+            name="isIntegrated"
+            [(ngModel)]="formData.isIntegrated"
+            [disabled]="['READ'].includes(popupMode)"
+            #isIntegratedRef
+            onLabel="Yes"
+            offLabel="No"
+            style="width: 75px"
+          ></kendo-switch>
+        </kendo-formfield>
+      </div> -->
+    <!-- </div> -->
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="awbNoRef" class="form-label" text="AWB No."></kendo-label>
+        <kendo-textbox
+          id="awbNo"
+          name="awbNo"
+          class="w-100 no-validate"
+          [(ngModel)]="formData.awbNo"
+          #awbNo="ngModel"
+          #awbNoRef
+          [clearButton]="true"
+          [disabled]="['READ'].includes(popupMode)"
+        >
+        </kendo-textbox>
+        <form-error text="AWB No." [model]="awbNo"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="awbDateRef" class="form-label" text="AWB Date"></kendo-label>
+        <kendo-datepicker
+          adaptiveMode="auto"
+          calendarType="infinite"
+          id="awbDate"
+          name="awbDate"
+          [incompleteDateValidation]="true"
+          [(ngModel)]="formData.awbDate"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          placeholder="DD/MM/YYYY"
+          format="dd/MM/yyyy"
+          [formatPlaceholder]="ds.dateFormatPlaceholder"
+          #awbDate="ngModel"
+          #awbDateRef
+          [disabled]="['READ'].includes(popupMode)"
+        >
+        </kendo-datepicker>
+        <form-error text="AWB Date" [model]="awbDate"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="deliveryTypeCodeRef" class="form-label required" text="Delivery Type"> </kendo-label>
+        <kendo-combobox
+          id="deliveryTypeCode"
+          name="deliveryTypeCode"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: deliveryTypeCodeRef,
+            compModel: deliveryTypeCode,
+            type: 'DELIVERY_TYPE',
+            inActive: ['CREATE'].includes(popupMode),
+            provideData: comboData['DELIVERY_TYPE']
+          }"
+          (comboData)="comboData['DELIVERY_TYPE'] = $event"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.deliveryTypeCode"
+          (ngModelChange)="setCustomerCountry('UPDATE')"
+          [itemDisabled]="ds.itemDisabled"
+          [maxlength]="10"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #deliveryTypeCode="ngModel"
+          #deliveryTypeCodeRef
+          required
+          [disabled]="['READ'].includes(popupMode)"
+        >
+        </kendo-combobox>
+        <form-error text="Delivery Type" [model]="deliveryTypeCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="custCountryRef" class="form-label required" text="Customer Country"> </kendo-label>
+        <kendo-combobox
+          id="custCountry"
+          name="custCountry"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: custCountryRef,
+            compModel: custCountry,
+            type: 'COUNTRY',
+            inActive: ['CREATE'].includes(popupMode),
+            provideData: comboData['COUNTRY']
+          }"
+          (comboData)="comboData['COUNTRY'] = $event"
+          (valueChange)="setDistance()"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.custCountry"
+          [itemDisabled]="ds.itemDisabled"
+          [disabled]="['READ'].includes(popupMode) || !formData.deliveryTypeCode || flags.customerCountryDisabled"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #custCountry="ngModel"
+          #custCountryRef
+          [maxlength]="50"
+          required
+        >
+        </kendo-combobox>
+        <form-error text="Customer Country" [model]="custCountry"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="custRegionCodeRef" class="form-label required" text="Customer Region"> </kendo-label>
+        <kendo-combobox
+          id="custRegionCode"
+          name="custRegionCode"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: custRegionCodeRef,
+            compModel: custRegionCode,
+            type: 'CUSTOMER_REGION',
+            inActive: ['CREATE'].includes(popupMode)
+          }"
+          (comboData)="comboData['CUSTOMER_REGION'] = $event"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.custRegionCode"
+          [filterData]="formData.custCountry"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #custRegionCode="ngModel"
+          #custRegionCodeRef
+          required
+          [maxlength]="8"
+          [disabled]="['READ'].includes(popupMode)"
+        >
+        </kendo-combobox>
+        <form-error text="Customer Region" [model]="custRegionCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="deliveryModeCodeRef" class="form-label required" text="Delivery Mode"></kendo-label>
+        <kendo-combobox
+          id="deliveryModeCode"
+          name="deliveryModeCode"
+          [allowCustom]="false"
+          [appCombobox]="{
+            compRef: deliveryModeCodeRef,
+            compModel: deliveryModeCode,
+            type: 'SALES_DELIVERY_MODE',
+            inActive: ['CREATE'].includes(popupMode),
+            provideData: comboData['SALES_DELIVERY_MODE']
+          }"
+          [callApiOnDataChange]="{deliveryType: formData.deliveryTypeCode}"
+          (comboData)="comboData['SALES_DELIVERY_MODE'] = $event; setDistance()"
+          (valueChange)="setDistance()"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [itemDisabled]="ds.itemDisabled"
+          [disabled]="['READ'].includes(popupMode)"
+          [(ngModel)]="formData.deliveryModeCode"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #deliveryModeCode="ngModel"
+          #deliveryModeCodeRef
+          required
+          [maxlength]="8"
+        >
+        </kendo-combobox>
+        <form-error text="Delivery Mode" [model]="deliveryModeCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngIf="extraData.countryCode === 'KSA' && flags.isDriveMode === true">
+      <kendo-formfield>
+        <kendo-label [for]="fslCodeRef" class="form-label required" text="FSL Code"></kendo-label>
+        <kendo-combobox
+          id="fslCode"
+          name="fslCode"
+          [allowCustom]="false"
+          [appCombobox]="{compRef: fslCodeRef, compModel: fslCode, type: 'FSL_STATIC', inActive: ['CREATE'].includes(popupMode)}"
+          [filterable]="true"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="formData.fslCode"
+          [disabled]="['READ'].includes(popupMode)"
+          (valueChange)="setDistance()"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #fslCode="ngModel"
+          #fslCodeRef
+          [required]="extraData.countryCode === 'KSA' && flags.isDriveMode === true"
+          [maxlength]="5"
+        >
+        </kendo-combobox>
+        <form-error text="FSL Code" [model]="fslCode"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <!-- <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield>
+        <kendo-label [for]="expectedDeliveryDateRef" class="form-label required" text="Expected Delivery Date"></kendo-label>
+        <kendo-datepicker adaptiveMode="auto"
+          calendarType="infinite"
+          id="expectedDeliveryDate"
+          name="expectedDeliveryDate"
+          [incompleteDateValidation]="true"
+          [(ngModel)]="formData.expectedDeliveryDate"
+          [disabled]="['READ'].includes(popupMode)"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          placeholder="DD/MM/YYYY"
+          format="dd/MM/yyyy"
+          [min]="currentMonth()"
+          [disabledDatesValidation]="['CREATE'].includes(popupMode)"
+          [disabledDates]="disabledPreviousDates"
+          [formatPlaceholder]="ds.dateFormatPlaceholder"
+          #expectedDeliveryDate="ngModel"
+          #expectedDeliveryDateRef
+          required
+        >
+        </kendo-datepicker>
+        <form-error text="Expected Delivery Date" [model]="expectedDeliveryDate"> </form-error>
+      </kendo-formfield>
+    </div> -->
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield [style]="{'--suffix-width': suffix.offsetWidth + 'px'}">
+        <kendo-label [for]="volumeRef" class="form-label required" text="Volume"></kendo-label>
+        <kendo-numerictextbox
+          id="volume"
+          name="volume"
+          ngModel
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #volume="ngModel"
+          #volumeRef
+          required
+          [min]="0"
+          [autoCorrect]="true"
+          [maxlength]="9"
+          [decimals]="6"
+          [format]="{minimumFractionDigits: 0, maximumFractionDigits: ds.formatNumericTextbox(volume.value)}"
+          [disabled]="['READ'].includes(popupMode)"
+          [(ngModel)]="formData.volume"
+        >
+        </kendo-numerictextbox>
+        <div class="numerictextbox-suffix px-2" #suffix>
+          <div>CCM</div>
+        </div>
+        <form-error text="Volume" [model]="volume"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <kendo-formfield [style]="{'--suffix-width': suffix.offsetWidth + 'px'}">
+        <kendo-label [for]="weightRef" class="form-label" text="Weight"></kendo-label>
+        <kendo-numerictextbox
+          id="weight"
+          name="weight"
+          ngModel
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #weight="ngModel"
+          #weightRef
+          required
+          [min]="0"
+          [autoCorrect]="true"
+          [maxlength]="9"
+          [decimals]="3"
+          [format]="{minimumFractionDigits: 0, maximumFractionDigits: ds.formatNumericTextbox(weight.value)}"
+          [disabled]="['READ'].includes(popupMode)"
+          [(ngModel)]="formData.weight"
+        >
+        </kendo-numerictextbox>
+        <div class="numerictextbox-suffix px-2" #suffix>
+          <div>KG</div>
+        </div>
+        <form-error text="Weight" [model]="weight"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" *ngIf="flags.isDriveMode">
+      <kendo-formfield [style]="{'--suffix-width': suffix.offsetWidth + 'px'}">
+        <kendo-label [for]="distanceRef" class="form-label required" text="Distance"></kendo-label>
+        <kendo-numerictextbox
+          id="distance"
+          name="distance"
+          ngModel
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #distance="ngModel"
+          #distanceRef
+          required
+          [min]="0"
+          [autoCorrect]="true"
+          [maxlength]="9"
+          [decimals]="2"
+          [format]="{minimumFractionDigits: 0, maximumFractionDigits: ds.formatNumericTextbox(distance.value)}"
+          [disabled]="true"
+          [(ngModel)]="formData.distance"
+        >
+        </kendo-numerictextbox>
+        <div class="numerictextbox-suffix px-2" #suffix>
+          <div>KM</div>
+        </div>
+        <form-error text="Distance" [model]="distance"> </form-error>
+      </kendo-formfield>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <app-radio-button
+        id="demoPeriod"
+        name="demoPeriod"
+        text="Demo Period"
+        [(ngModel)]="formData.demoPeriod"
+        [list]="demoPeriodList"
+        textField="value"
+        valueField="value"
+        [required]="true"
+        [disabled]="['READ'].includes(popupMode)"
+      ></app-radio-button>
+    </div>
+
+    <ng-container *ngIf="flags.showIfNozomiVendor()">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+        <kendo-formfield>
+          <kendo-label [for]="incotermsRef" class="form-label required" text="Incoterms"></kendo-label>
+          <kendo-combobox
+            id="incoterms"
+            name="incoterms"
+            [allowCustom]="false"
+            [appCombobox]="{compRef: incotermsRef, compModel: incoterms, type: 'INCOTERMS', inActive: ['CREATE'].includes(popupMode)}"
+            [filterable]="true"
+            [textField]="'text'"
+            [valueField]="'value'"
+            [valuePrimitive]="true"
+            [(ngModel)]="formData.incoterms"
+            [disabled]="['READ'].includes(popupMode)"
+            showErrorIcon="initial"
+            showSuccessIcon="initial"
+            #incoterms="ngModel"
+            #incotermsRef
+            [maxlength]="5"
+          >
+          </kendo-combobox>
+          <form-error text="Incoterms" [model]="incoterms"> </form-error>
+        </kendo-formfield>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+        <kendo-formfield>
+          <kendo-label [for]="accountNoRef" class="form-label required" text="Account No"></kendo-label>
+          <kendo-textbox
+            id="accountNo"
+            name="accountNo"
+            [(ngModel)]="formData.accountNo"
+            [disabled]="['READ'].includes(popupMode)"
+            showErrorIcon="initial"
+            showSuccessIcon="initial"
+            #accountNo="ngModel"
+            #accountNoRef
+            required
+            [maxlength]="10"
+          >
+          </kendo-textbox>
+          <form-error text="Account No" [model]="accountNo"> </form-error>
+        </kendo-formfield>
+      </div>
+      <ng-container *ngIf="flags.showIfNozomiVendor()">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="pocIdRef" class="form-label required" text="POC Id"></kendo-label>
+            <kendo-textbox
+              id="pocId"
+              name="pocId"
+              [(ngModel)]="formData.pocId"
+              [disabled]="['READ'].includes(popupMode)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #pocId="ngModel"
+              #pocIdRef
+              required
+              [maxlength]="100"
+            >
+            </kendo-textbox>
+            <form-error text="POC Id" [model]="pocId"> </form-error>
+          </kendo-formfield>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="pocNameRef" class="form-label required" text="POC Name"></kendo-label>
+            <kendo-textbox
+              id="pocName"
+              name="pocName"
+              [(ngModel)]="formData.pocName"
+              [disabled]="['READ'].includes(popupMode)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #pocName="ngModel"
+              #pocNameRef
+              required
+              [maxlength]="300"
+            >
+            </kendo-textbox>
+            <form-error text="POC Name" [model]="pocName"> </form-error>
+          </kendo-formfield>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="shipmentNameRef" class="form-label required" text="Shipment Name"></kendo-label>
+            <kendo-textbox
+              id="shipmentName"
+              name="shipmentName"
+              [(ngModel)]="formData.shipmentName"
+              [disabled]="['READ'].includes(popupMode)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #shipmentName="ngModel"
+              #shipmentNameRef
+              required
+              [maxlength]="100"
+            >
+            </kendo-textbox>
+            <form-error text="Shipment Name" [model]="shipmentName"> </form-error>
+          </kendo-formfield>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <app-items-table
+      [popupMode]="popupMode"
+      [config2]="itemsTableConfig"
+      [divisionCode]="userData?.divisionCode"
+      [vendorCode]="divisionCodeRef.dataItem?.code?.vendor"
+      [brandCode]="formData.brandCode"
+      [itemData]="formData.itemData"
+      [currency]="formData.currencyCode || ''"
+      [currencyRate]="formData.exchangeRate"
+      [stockLocationCode]="userData?.locationCode || ''"
+      [(totalValues)]="totalValues"
+      [error]="{show: f.submitted && !totalValues.totalItemQty, message: 'Select one or more quantity'}"
+      [disabled]="!formData?.brandCode || !formData?.customerCode"
+      (performingAction)="flags.performingAction = $event"
+      (deletedItemsChange)="deletedItems = $event"
+      (itemChanged)="onBatchFormItemsChange()"
+    ></app-items-table>
+    <!-- [stockAdjustment]="stockAdjustment" -->
+
+    <div class="col-12 col-md-7 col-lg-6 row mx-0">
+      <fieldset class="col-12 col-md fieldset my-3 pb-0 row mx-0 py-3">
+        <legend>Invoice Details</legend>
+        <div class="col-12 col-sm-auto amount-display m-0 text-end">
+          <span class="font-12 text-end mb-3"> Customer's Debit : </span>
+          <span class="font-12 text-end value mb-3">
+            <data-format [data]="totalValues.totalAmtFC" type="NUMBER" [decimal]="ds.foreignCurrencyDecimal"> </data-format>&nbsp;
+            {{ formData.currencyCode }}
+          </span>
+          <span class="font-12 text-end value mb-3">
+            <data-format [data]="totalValues.totalAmtBC" type="NUMBER" [decimal]="ds.baseCurrencyDecimal"> </data-format>&nbsp;
+            {{ ds.baseCurrencyConstant }}
+          </span>
+          <br />
+          <span class="font-12 text-end mb-3"> Customer's Debit After VAT: </span>
+          <span class="font-12 text-end value mb-3">
+            <data-format [data]="totalValues.totalAmtFC" type="NUMBER" [decimal]="ds.foreignCurrencyDecimal"> </data-format>&nbsp;
+            {{ formData.currencyCode }}
+          </span>
+          <span class="font-12 text-end value mb-3">
+            <data-format [data]="totalValues.totalAmtBC" type="NUMBER" [decimal]="ds.baseCurrencyDecimal"> </data-format>&nbsp;
+            {{ ds.baseCurrencyConstant }}
+          </span>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="col-12 col-sm-10 col-md my-3 min-w-300">
+      <kendo-formfield>
+        <kendo-label [for]="remarksRef" class="form-label" text="Remarks"></kendo-label>
+        <kendo-textarea
+          id="remarks"
+          name="remarks"
+          [(ngModel)]="formData.remarks"
+          showErrorIcon="initial"
+          showSuccessIcon="initial"
+          #remarks="ngModel"
+          #remarksRef
+          [disabled]="['READ'].includes(popupMode)"
+          [maxlength]="250"
+        >
+        </kendo-textarea>
+      </kendo-formfield>
+    </div>
+
+    <hr />
+
+    <div class="col-12 text-end" *ngIf="['UPDATE', 'CREATE'].includes(popupMode)">
+      <button
+        [attr.accesskey]="ds.accessKey.SAVE"
+        type="submit"
+        class="btn btn-primary px-4"
+        (click)="onSubmit(f)"
+        [disabled]="!f.dirty || flags.performingAction"
+      >
+        {{ popupMode === 'UPDATE' ? 'Update' : 'Add' }}
+      </button>
+    </div>
+  </form>
+</kendo-dialog>
+
+<ng-template #notificationTemplate>
+  <ng-container *ngIf="errors.pendingRfidDetails && pendingRfidDetails.length > 0">
+    <h6 *ngIf="pendingRfidDetails.length === 1">Please Enter RFID Details for {{ pendingRfidDetails[0] }}</h6>
+    <ng-container *ngIf="pendingRfidDetails.length > 1">
+      <h6>Please Enter RFID Details for following:</h6>
+      <ul>
+        <li *ngFor="let item of pendingRfidDetails">{{ item }}</li>
+      </ul>
+    </ng-container>
+  </ng-container>
+</ng-template>
