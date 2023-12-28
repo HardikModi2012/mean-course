@@ -1,0 +1,242 @@
+<ng-container (appUserData)="userData = $event"></ng-container>
+<div class="sub-header" id="sub-header" (onResize)="ds.setSubHeaderHeight()">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <kendo-breadcrumb collapseMode="wrap" [items]="breadcrumbItems" (itemClick)="ds.onBreadcrumbItemClick($event)"></kendo-breadcrumb>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12 my-3">
+      <form class="row mx-0" #f="ngForm" appScrollToInvalid>
+        <!-- <div class="col-12 row mx-0"> -->
+        <fieldset class="col-12 col-md fieldset my-3 row mx-0">
+          <legend>Query Selection</legend>
+          <div class="col-12 col-sm-4 col-lg-3 my-2">
+            <kendo-formfield>
+              <kendo-label [for]="divisionCodeRef" class="form-label" text="Division"></kendo-label>
+              <kendo-combobox
+                class="w-100"
+                id="divisionCode"
+                name="divisionCode"
+                [allowCustom]="false"
+                [appCombobox]="{
+                  compRef: divisionCodeRef,
+                  compModel: divisionCode,
+                  type: 'DIVISION',
+                  provideData: comboData['DIVISION']
+                }"
+                (comboData)="comboData['DIVISION'] = $event; setDefaultDivision($event)"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [disabled]="!userData?.allowDivisionChange"
+                [(ngModel)]="formData.divisionCode"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #divisionCode="ngModel"
+                #divisionCodeRef
+                [maxlength]="4"
+              >
+              </kendo-combobox>
+            </kendo-formfield>
+          </div>
+
+          <div class="col-12 col-sm-4 col-lg-3 my-2">
+            <kendo-formfield>
+              <kendo-label [for]="vendorRef" class="form-label" text="Vendor"></kendo-label>
+              <kendo-combobox
+                class="w-100"
+                id="vendor"
+                name="vendor"
+                [allowCustom]="false"
+                [appCombobox]="{compRef: vendorRef, type: 'VENDOR', inActive: true}"
+                (comboData)="comboData['VENDOR'] = $event"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [virtual]="true"
+                [(ngModel)]="formData.vendor"
+                (ngModelChange)="vendorCode = $event"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #vendor="ngModel"
+                #vendorRef
+              >
+              </kendo-combobox>
+            </kendo-formfield>
+          </div>
+
+          <div class="col-12 col-sm-4 col-lg-3">
+            <kendo-formfield>
+              <kendo-label [for]="searchRef" class="form-label" text="Search"></kendo-label>
+              <kendo-textbox
+                id="search"
+                name="search"
+                placeholder="Search in all Columns"
+                class="w-100 no-validate"
+                [(ngModel)]="formData.search"
+                #search="ngModel"
+                #searchRef
+                [clearButton]="true"
+                (valueChange)="onFilter(f)"
+                (keyup.enter)="onFilter(f)"
+              >
+                <ng-template kendoTextBoxSuffixTemplate>
+                  <kendo-textbox-separator></kendo-textbox-separator>
+                  <button class="d-none" [attr.accesskey]="ds.accessKey.SEARCH" (click)="searchRef.focus()"></button>
+                  <button type="button" kendoButton fillMode="clear" class="btn px-2" (click)="onFilter(f)">
+                    <app-svg-icon icon="SEARCH" class="d-inline-block"></app-svg-icon>
+                  </button>
+                </ng-template>
+              </kendo-textbox>
+            </kendo-formfield>
+          </div>
+        </fieldset>
+        <!-- </div> -->
+      </form>
+
+      <kendo-grid
+        [data]="gridData"
+        [pageSize]="paging.pagesize"
+        [skip]="paging.skip"
+        [pageable]="paging.pageable"
+        (pageChange)="onPageChange($event)"
+        [loading]="flags.isTableLoading"
+        [resizable]="true"
+        #grid="kendoGrid"
+      >
+        <ng-template kendoGridLoadingTemplate>
+          <app-loading-grid></app-loading-grid>
+        </ng-template>
+        <ng-template kendoGridNoRecordsTemplate>
+          <app-no-data-grid *ngIf="!flags.isTableLoading"></app-no-data-grid>
+        </ng-template>
+        <ng-template kendoGridToolbarTemplate>
+          <!-- <div class="row w-100 mx-0 mb-2"> -->
+
+          <div class="col-12 col-sm-auto ms-auto">
+            <p class="m-0 d-lg-none">&nbsp;</p>
+            <button [attr.accesskey]="accessKey.SEARCH" type="submit" class="btn btn-with-icon my-2 btn-info me-2" (click)="onQuery(f)">
+              <app-svg-icon icon="SEARCH" class="d-inline-block"></app-svg-icon>&nbsp;Query
+            </button>
+            <button
+              class="btn btn-with-icon my-2 btn-primary me-2"
+              (click)="onQuery(f)"
+              type="button"
+              [attr.accesskey]="ds.accessKey.REFRESH"
+            >
+              <app-svg-icon icon="REFRESH"></app-svg-icon>&nbsp;Refresh
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-success me-2"
+              (click)="fetchDataForExcel(grid)"
+              type="button"
+              [attr.accesskey]="ds.accessKey.PRINT_EXCEL"
+            >
+              <app-svg-icon icon="EXCEL"></app-svg-icon>&nbsp;Excel
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-warning me-2"
+              (click)="onExportToCsv()"
+              type="button"
+              [attr.accesskey]="ds.accessKey.PRINT_CSV"
+            >
+              <app-svg-icon icon="CSV"></app-svg-icon>&nbsp;CSV
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-danger me-2"
+              kendoGridPDFCommand
+              [attr.accesskey]="ds.accessKey.PRINT_PDF"
+            >
+              <app-svg-icon icon="PDF"></app-svg-icon>&nbsp;PDF
+            </button>
+          </div>
+          <!-- </div> -->
+        </ng-template>
+
+        <!-- <kendo-grid-checkbox-column field="SELECTED" [width]="33">
+          <ng-template kendoGridHeaderTemplate>
+            <input
+              type="checkbox"
+              kendoCheckBox
+              name="selectAll"
+              [indeterminate]="selectAll === null ? true : false"
+              [(ngModel)]="selectAll"
+              (ngModelChange)="onSelectAllItem($event)"
+              [disabled]="true"
+            />
+          </ng-template>
+  
+          <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <input
+              type="checkbox"
+              kendoCheckBox
+              name="selectAll"
+              [(ngModel)]="dataItem.SELECTED"
+              (ngModelChange)="selectItem($event, dataItem)"
+              [disabled]="true"
+            />
+          </ng-template>
+        </kendo-grid-checkbox-column> -->
+
+        <ng-container *ngFor="let header of gridHeaderList">
+          <kendo-grid-column
+            [field]="header.field"
+            [title]="header.title"
+            [autoSize]="false"
+            [width]="header?.width || 100"
+            [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            [class]="{'text-end': header?.align === 'RIGHT', 'text-center': header?.align === 'CENTER'}"
+          >
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+              <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+            </ng-template>
+          </kendo-grid-column>
+        </ng-container>
+
+        <kendo-grid-pdf fileName="{{ currentScreen.id }}_LIST.pdf" [allPages]="true" paperSize="A4" [repeatHeaders]="true" [scale]="0.5">
+          <kendo-grid-pdf-margin top="1.5cm" left="0.5cm" right="0.5cm" bottom="1.25cm" style="font-size: 12px"></kendo-grid-pdf-margin>
+          <ng-template kendoGridPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <app-grid-pdf [pageNum]="pageNum" [totalPages]="totalPages"> </app-grid-pdf>
+          </ng-template>
+
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-grid-column
+              [field]="header.field"
+              [title]="header.title"
+              [width]="header?.width || 100"
+              [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+              [class]="{'text-end': header?.align === 'RIGHT', 'text-center': header?.align === 'CENTER'}"
+            >
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-grid-column>
+          </ng-container>
+        </kendo-grid-pdf>
+
+        <kendo-grid-excel fileName="{{ currentScreen.id }}_LIST.xlsx">
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-excelexport-column [field]="header.field" [title]="header.title" [width]="header.width || 100">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-excelexport-column>
+          </ng-container>
+        </kendo-grid-excel>
+      </kendo-grid>
+    </div>
+  </div>
+</div>
+
+<div kendoDialogContainer></div>

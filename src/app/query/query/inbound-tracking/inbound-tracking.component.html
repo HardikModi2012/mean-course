@@ -1,0 +1,369 @@
+<ng-container (appUserData)="userData = $event"></ng-container>
+<div class="sub-header" id="sub-header" (onResize)="ds.setSubHeaderHeight()">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <kendo-breadcrumb collapseMode="wrap" [items]="breadcrumbItems" (itemClick)="ds.onBreadcrumbItemClick($event)"></kendo-breadcrumb>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12 my-4">
+      <kendo-grid
+        [data]="gridData"
+        [pageSize]="paging.pagesize"
+        [skip]="paging.skip"
+        [pageable]="paging.pageable"
+        (pageChange)="onPageChange($event)"
+        [loading]="flags.isTableLoading"
+        [resizable]="true"
+        class="auto-height"
+        #grid="kendoGrid"
+        [columnMenu]="{columnChooser: true, stick: true, sort: false, filter: false}"
+        [sortable]="true"
+      >
+        <ng-template kendoGridLoadingTemplate>
+          <app-loading-grid></app-loading-grid>
+        </ng-template>
+        <ng-template kendoGridNoRecordsTemplate>
+          <app-no-data-grid *ngIf="!flags.isTableLoading"></app-no-data-grid>
+        </ng-template>
+        <ng-template kendoGridToolbarTemplate>
+          <form class="row w-100 mx-0 mb-2" #f="ngForm" appScrollToInvalid>
+            <div class="col-12 col-sm-4 col-lg-3 my-2">
+              <kendo-formfield>
+                <kendo-label [for]="searchRef" class="form-label" text="Search"></kendo-label>
+                <kendo-textbox
+                  id="search"
+                  name="search"
+                  placeholder="Search in all Columns"
+                  class="w-100"
+                  [(ngModel)]="searchTable"
+                  #search="ngModel"
+                  #searchRef
+                  [clearButton]="true"
+                  (valueChange)="onFilter()"
+                  (keyup.enter)="onFilter()"
+                >
+                  <ng-template kendoTextBoxSuffixTemplate>
+                    <kendo-textbox-separator></kendo-textbox-separator>
+                    <button class="d-none" [attr.accesskey]="ds.accessKey.SEARCH" (click)="searchRef.focus()"></button>
+                    <button type="button" kendoButton fillMode="clear" class="btn px-2" (click)="onFilter()">
+                      <app-svg-icon icon="SEARCH" class="d-inline-block"></app-svg-icon>
+                    </button>
+                  </ng-template>
+                </kendo-textbox>
+              </kendo-formfield>
+            </div>
+
+            <div class="col-12 col-sm-4 col-lg-3 my-2">
+              <kendo-formfield>
+                <kendo-label [for]="divisionCodeRef" class="form-label" text="Division"></kendo-label>
+                <kendo-combobox
+                  class="w-100"
+                  id="divisionCode"
+                  name="divisionCode"
+                  [allowCustom]="false"
+                  [appCombobox]="{
+                    compRef: divisionCodeRef,
+                    compModel: divisionCode,
+                    type: 'USER_DIVISION',
+                    provideData: comboData['USER_DIVISION']
+                  }"
+                  (comboData)="comboData['USER_DIVISION'] = $event; setDefaultDivision($event)"
+                  [filterable]="true"
+                  [textField]="'text'"
+                  [valueField]="'value'"
+                  [valuePrimitive]="true"
+                  [(ngModel)]="formData.divisionCode"
+                  showErrorIcon="initial"
+                  showSuccessIcon="initial"
+                  #divisionCode="ngModel"
+                  #divisionCodeRef
+                  [disabled]="!userData?.allowDivisionChange"
+                >
+                </kendo-combobox>
+              </kendo-formfield>
+            </div>
+
+            <div class="col-12 col-sm-4 col-lg-3 my-2">
+              <kendo-formfield>
+                <kendo-label [for]="fromDateRef" class="form-label" text="From Date"></kendo-label>
+                <kendo-datepicker
+                  adaptiveMode="auto"
+                  class="w-100"
+                  calendarType="infinite"
+                  id="fromDate"
+                  name="fromDate"
+                  [incompleteDateValidation]="true"
+                  [(ngModel)]="formData.fromDate"
+                  showErrorIcon="initial"
+                  showSuccessIcon="initial"
+                  placeholder="DD/MM/YYYY"
+                  format="dd/MM/yyyy"
+                  [formatPlaceholder]="ds.dateFormatPlaceholder"
+                  #fromDate="ngModel"
+                  #fromDateRef
+                >
+                </kendo-datepicker>
+                <form-error text="From Date" [model]="fromDate"> </form-error>
+              </kendo-formfield>
+            </div>
+
+            <div class="col-12 col-sm-4 col-lg-3 my-2">
+              <kendo-formfield>
+                <kendo-label [for]="toDateRef" class="form-label" text="To Date"></kendo-label>
+                <kendo-datepicker
+                  adaptiveMode="auto"
+                  class="w-100"
+                  calendarType="infinite"
+                  id="toDate"
+                  name="toDate"
+                  [incompleteDateValidation]="true"
+                  [(ngModel)]="formData.toDate"
+                  showErrorIcon="initial"
+                  showSuccessIcon="initial"
+                  placeholder="DD/MM/YYYY"
+                  format="dd/MM/yyyy"
+                  [formatPlaceholder]="ds.dateFormatPlaceholder"
+                  #toDate="ngModel"
+                  #toDateRef
+                >
+                </kendo-datepicker>
+                <form-error text="To Date" [model]="toDate"> </form-error>
+              </kendo-formfield>
+            </div>
+            <div class="col-12 col-sm-auto ms-auto">
+              <p class="m-0 d-lg-none">&nbsp;</p>
+              <button [attr.accesskey]="accessKey.SEARCH" type="submit" class="btn btn-with-icon my-2 btn-info me-2" (click)="onQuery(f)">
+                <app-svg-icon icon="SEARCH" class="d-inline-block"></app-svg-icon>&nbsp;Query
+              </button>
+              <button
+                class="btn btn-with-icon my-2 btn-primary me-2"
+                (click)="onGetTableData('LOAD_DATA')"
+                type="button"
+                [attr.accesskey]="ds.accessKey.REFRESH"
+              >
+                <app-svg-icon icon="REFRESH"></app-svg-icon>&nbsp;Refresh
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-with-icon my-2 btn-success me-2"
+                (click)="fetchDataForExcel(grid)"
+                type="button"
+                [attr.accesskey]="ds.accessKey.PRINT_EXCEL"
+              >
+                <app-svg-icon icon="EXCEL"></app-svg-icon>&nbsp;Excel
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-with-icon my-2 btn-warning me-2"
+                (click)="onExportToCsv()"
+                type="button"
+                [attr.accesskey]="ds.accessKey.PRINT_CSV"
+              >
+                <app-svg-icon icon="CSV"></app-svg-icon>&nbsp;CSV
+              </button>
+              <button
+                *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+                class="btn btn-with-icon my-2 btn-danger"
+                kendoGridPDFCommand
+                [attr.accesskey]="ds.accessKey.PRINT_PDF"
+              >
+                <app-svg-icon icon="PDF"></app-svg-icon>&nbsp;PDF
+              </button>
+            </div>
+          </form>
+        </ng-template>
+
+        <ng-container *ngFor="let header of gridHeaderList">
+          <kendo-grid-column
+            [field]="header.field"
+            [title]="header.title"
+            [autoSize]="false"
+            [width]="header?.width || 100"
+            [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            [class]="{'text-end': header?.align === 'RIGHT', 'text-center': header?.align === 'CENTER'}"
+          >
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+              <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header.typeConfig"></data-format>
+            </ng-template>
+          </kendo-grid-column>
+        </ng-container>
+
+        <!-- Shipment Invoice -->
+        <kendo-grid-column field="index" title="Shipment Invoice" [width]="300" [minResizableWidth]="200" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-center" kendoTooltip *ngIf="item.shipmentInvoice">
+              {{ item?.shipmentInvoice }}
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item?.shipmentInvoice)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+              <!-- </a> -->
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <!-- Packaging List -->
+        <kendo-grid-column field="index" title="Packaging List" [width]="300" [minResizableWidth]="200" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-center" kendoTooltip *ngIf="item.packingList">
+              {{ item?.packingList }}
+              <!-- </a> -->
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item?.packingList)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <!-- Airway Bill -->
+        <kendo-grid-column field="index" title="Airway Bill" [width]="300" [minResizableWidth]="200" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-center" kendoTooltip *ngIf="item.airwayBill">
+              {{ item?.airwayBill }}
+              <!-- </a> -->
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item?.airwayBill)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <!-- BOE -->
+        <kendo-grid-column field="index" title="BOE" [width]="300" [minResizableWidth]="200" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-center" kendoTooltip *ngIf="item.boe">
+              {{ item?.boe }}
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item?.boe)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+              <!-- </a> -->
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <!-- POD -->
+        <kendo-grid-column field="index" title="POD" [width]="300" [minResizableWidth]="200" [filterable]="false">
+          <ng-template kendoGridCellTemplate let-item>
+            <div class="d-flex align-items-center" kendoTooltip *ngIf="item.pod">
+              {{ item?.pod }}
+              <button
+                class="btn-icon mx-1 link-primary-2"
+                kendoButton
+                *roleGuard="{role: 'READ', screenId: currentScreen.id}"
+                title="View"
+                (click)="onViewClick(item?.pod)"
+              >
+                <app-svg-icon icon="EYE"></app-svg-icon>
+              </button>
+              <!-- </a> -->
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+
+        <kendo-grid-pdf fileName="{{ currentScreen?.id }}_LIST.pdf" [allPages]="true" paperSize="A4" [repeatHeaders]="true" [scale]="0.5">
+          <kendo-grid-pdf-margin top="1.5cm" left="0.5cm" right="0.5cm" bottom="1.25cm" style="font-size: 12px"></kendo-grid-pdf-margin>
+          <ng-template kendoGridPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <app-grid-pdf [pageNum]="pageNum" [totalPages]="totalPages"> </app-grid-pdf>
+          </ng-template>
+
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-grid-column
+              [field]="header.field"
+              [title]="header.title"
+              [width]="header?.width || 100"
+              [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+              [class]="{'text-end': header?.align === 'RIGHT', 'text-center': header?.align === 'CENTER'}"
+            >
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-grid-column>
+          </ng-container>
+        </kendo-grid-pdf>
+
+        <kendo-grid-excel fileName="{{ currentScreen?.id }}.xlsx">
+          <kendo-excelexport-column field="poNumber" title="PO Number" [width]="100"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="documentNumber" title="GRN Number" [width]="100"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="documentDate" title="GRN Date" [width]="160" [cellOptions]="{format: 'dd/MM/yyyy HH:mm:ss'}">
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="division" title="Division" [width]="120"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="divisionName" title="Division Name" [width]="300"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="groupCode" title="Vendor Code" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="groupName" title="Vendor" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="brandCode" title="Brand Code" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="brandName" title="Brand" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="supplierName" title="Supplier Name" [width]="300"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="currency" title="Currency" [width]="120"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="stockLocation" title="Stock Location" [width]="200"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="invoiceNo" title="Invoice No." [width]="180"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="invoiceDate" title="Invoice Date" [width]="120" [cellOptions]="{format: 'dd/MM/yyyy'}">
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="doNumber" title="DO Number" [width]="180"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="doDate" title="DO Date" [width]="120" [cellOptions]="{format: 'dd/MM/yyyy'}">
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="receivedBy" title="Received By" [width]="160"> </kendo-excelexport-column>
+          <kendo-excelexport-column
+            field="receivedDate"
+            title="Received Date"
+            [width]="160"
+            [cellOptions]="{format: 'dd/MM/yyyy HH:mm:ss'}"
+          >
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="airwayBillNo" title="Airway Bill No." [width]="200"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="deliveryMode" title="Delivery Mode" [width]="180"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="amount" title="Amount" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="boeNumber" title="BOE Number" [width]="180"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="createdBy" title="Created By" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="approvedBy" title="Approved By" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column
+            field="approvedDate"
+            title="Approved Date"
+            [width]="150"
+            [cellOptions]="{format: 'dd/MM/yyyy HH:mm:ss'}"
+          >
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="receivedToGrn" title="Received => GRN Booking (HH)" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="grnToApproval" title="GRN Booking => GRN Approval (HH)" [width]="150">
+          </kendo-excelexport-column>
+          <kendo-excelexport-column field="dockToStock" title="Dock To Stock (HH)" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="status" title="Status" [width]="250"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="shipmentInvoice" title="Shipment Invoice" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="packingList" title="Packing List" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="airwayBill" title="Airway Bill" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="boe" title="BOE" [width]="150"> </kendo-excelexport-column>
+          <kendo-excelexport-column field="pod" title="POD" [width]="80"> </kendo-excelexport-column>
+        </kendo-grid-excel>
+      </kendo-grid>
+    </div>
+  </div>
+</div>
+
+<div kendoDialogContainer></div>

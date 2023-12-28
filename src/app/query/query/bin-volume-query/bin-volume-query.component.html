@@ -1,0 +1,417 @@
+<ng-container (appUserData)="userData = $event"></ng-container>
+<div class="sub-header" id="sub-header" (onResize)="ds.setSubHeaderHeight()">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <kendo-breadcrumb collapseMode="wrap" [items]="breadcrumbItems" (itemClick)="ds.onBreadcrumbItemClick($event)"></kendo-breadcrumb>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid px-4">
+    <form class="row mx-0 pt-3" #f="ngForm" appScrollToInvalid>
+      <fieldset class="col-12 col-md fieldset mt-3 row mx-0 pb-0">
+        <legend>Query Selection</legend>
+
+        <!-- Division -->
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="divisionCodeRef" class="form-label" text="Division"></kendo-label>
+            <kendo-combobox
+              class="w-100"
+              id="divisionCode"
+              name="divisionCode"
+              [allowCustom]="false"
+              [appCombobox]="{
+                compRef: divisionCodeRef,
+                compModel: divisionCode,
+                type: 'USER_DIVISION',
+                provideData: comboData['USER_DIVISION']
+              }"
+              (comboData)="comboData['USER_DIVISION'] = $event; setDefaultDivision($event)"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              [(ngModel)]="formData.divisionCode"
+              (ngModelChange)="onDivisionCodeChange(divisionCodeRef)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #divisionCode="ngModel"
+              #divisionCodeRef
+              [disabled]="!userData?.allowDivisionChange"
+            >
+            </kendo-combobox>
+          </kendo-formfield>
+        </div>
+
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="stockLocationCodeRef" class="form-label" text="Stock Location"></kendo-label>
+            <kendo-combobox
+              class="w-100"
+              id="stockLocationCode"
+              name="stockLocationCode"
+              [appCombobox]="{
+                compRef: stockLocationCodeRef,
+                type: 'LOCATION'
+              }"
+              [filterData]="{value: divisionCode?.value}"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              [allowCustom]="false"
+              [(ngModel)]="formData.locationCode"
+              [disabled]="!userData?.allowLocationChange"
+              (comboData)="comboData['LOCATION'] = $event; setDefaultLocation($event)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #stockLocationCode="ngModel"
+              #stockLocationCodeRef
+            ></kendo-combobox>
+          </kendo-formfield>
+        </div>
+
+        <!-- VENDOR -->
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="vendorCodeRef" class="form-label" text="Vendor"></kendo-label>
+            <kendo-combobox
+              class="w-100"
+              id="vendorCode"
+              name="vendorCode"
+              [allowCustom]="false"
+              [appCombobox]="{compRef: vendorCodeRef, type: 'ALTER_VENDOR'}"
+              (comboData)="comboData['ALTER_VENDOR'] = $event"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              [(ngModel)]="formData.vendorCode"
+              (ngModelChange)="onVendorChange($event, divisionCodeRef, vendorCodeRef)"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #vendorCode="ngModel"
+              #vendorCodeRef
+              [disabled]="!userData?.allowDivisionChange"
+            >
+            </kendo-combobox>
+          </kendo-formfield>
+        </div>
+
+        <!-- BRAND -->
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="brandCodeRef" class="form-label" text="Brand"></kendo-label>
+            <kendo-combobox
+              class="w-100"
+              id="brandCode"
+              name="brandCode"
+              [appCombobox]="{
+                compModel: brandCode,
+                compRef: brandCodeRef,
+                inActive: true,
+                type: 'BRAND'
+              }"
+              (comboData)="setDefaultBrand($event)"
+              [filterData]="vendorCode.value"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              [allowCustom]="false"
+              [(ngModel)]="formData.brandCode"
+              (ngModelChange)="!!formData.brandCode ? (formData.vendorCode = brandCodeRef?.dataItem?.code?.vendorCode) : null"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #brandCode="ngModel"
+              #brandCodeRef
+              [disabled]="!vendorCodeRef?.dataItem?.value"
+            >
+            </kendo-combobox>
+          </kendo-formfield>
+        </div>
+
+        <ng-container *ngIf="['STOCK_QUERY_BIN_LOCATION'].includes(currentScreen.id)">
+          <div class="col-12 col-sm-4 col-lg-3 mb-3">
+            <kendo-formfield>
+              <kendo-label [for]="categoryRef" class="form-label" text="Category"></kendo-label>
+              <kendo-combobox
+                class="w-100"
+                id="category"
+                name="category"
+                [allowCustom]="false"
+                [appCombobox]="{
+                  compModel: category,
+                  compRef: categoryRef,
+                  type: 'CATEGORY'
+                }"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [(ngModel)]="formData.categoryCode"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #category="ngModel"
+                #categoryRef
+                [maxlength]="8"
+              >
+              </kendo-combobox>
+            </kendo-formfield>
+          </div>
+          <div class="col-12 col-sm-4 col-lg-3 mb-3">
+            <kendo-formfield>
+              <kendo-label [for]="querySelectionRef" class="form-label" text="Query Type"></kendo-label>
+              <kendo-combobox
+                class="w-100"
+                id="querySelection"
+                name="querySelection"
+                [allowCustom]="false"
+                [appCombobox]="{compRef: querySelectionRef, type: 'QUERY_SELECTION_BIN_LOCATION'}"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [(ngModel)]="formData.querySelection"
+                (ngModelChange)="clearSelectedOptions()"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #querySelection="ngModel"
+                #querySelectionRef
+                [maxlength]="50"
+              >
+              </kendo-combobox>
+            </kendo-formfield>
+          </div>
+          <!-- Item -->
+          <div class="col-12 col-sm-4 col-lg-3 mb-3" *ngIf="querySelectionRef?.dataItem?.value == 1">
+            <kendo-formfield>
+              <kendo-label [for]="itemCodeRef" class="form-label" text="Item Code"></kendo-label>
+              <kendo-combobox
+                id="itemCode"
+                name="itemCode"
+                [allowCustom]="false"
+                class="w-100"
+                [appCombobox]="{
+                  compModel: itemCode,
+                  compRef: itemCodeRef,
+                  type: 'ITEM_LIST',
+                  inActive: true,
+                  provideData: comboData['ITEM_LIST']
+                }"
+                [callApiOnDataChange]="{vendorCode: vendorCode?.value, brandCode: brandCode?.value}"
+                [filterable]="true"
+                [textField]="'text'"
+                [valueField]="'value'"
+                [valuePrimitive]="true"
+                [virtual]="true"
+                [(ngModel)]="formData.itemCode"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #itemCode="ngModel"
+                #itemCodeRef
+              >
+              </kendo-combobox>
+            </kendo-formfield>
+          </div>
+          <!-- ITEM DESCRIPTION-->
+          <div class="col-12 col-sm-4 col-lg-3 mb-3" *ngIf="querySelectionRef?.dataItem?.value == 2">
+            <kendo-formfield>
+              <kendo-label [for]="descriptionRef" class="form-label" text="Item Description"></kendo-label>
+              <kendo-textbox
+                class="w-100"
+                id="description"
+                name="description"
+                [(ngModel)]="formData.description"
+                showErrorIcon="initial"
+                showSuccessIcon="initial"
+                #description="ngModel"
+                #descriptionRef
+              >
+              </kendo-textbox>
+            </kendo-formfield>
+          </div>
+        </ng-container>
+
+        <!-- Bin Location -->
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+          <kendo-formfield>
+            <kendo-label [for]="binLocationRef" class="form-label" text="Bin Location"></kendo-label>
+            <kendo-combobox
+              class="w-100"
+              id="binLocation"
+              name="binLocation"
+              [(ngModel)]="formData.binLocation"
+              [allowCustom]="false"
+              [appCombobox]="{
+                compModel: binLocation,
+                compRef: binLocationRef,
+                type: 'GRN_BIN_LIST',
+                provideData: comboData['GRN_BIN_LIST'],
+                inActive: true
+              }"
+              (comboData)="comboData['GRN_BIN_LIST'] = $event"
+              [callApiOnDataChange]="{vendorCode: vendorCode?.value, brandCode: brandCode?.value}"
+              [filterable]="true"
+              [textField]="'text'"
+              [valueField]="'value'"
+              [valuePrimitive]="true"
+              showErrorIcon="initial"
+              showSuccessIcon="initial"
+              #binLocation="ngModel"
+              #binLocationRef
+            >
+            </kendo-combobox>
+          </kendo-formfield>
+        </div>
+
+        <!-- <div class="col-12 col-sm-4 col-lg-3 my-4">
+          <kendo-formfield class="d-flex align-items-center">
+            <kendo-label [for]="incZeroStockRef" class="form-label me-2 my-2" text="Include Zero Stock"></kendo-label>
+            <kendo-switch
+              id="incZeroStock"
+              class="kendo-switch-success"
+              name="incZeroStock"
+              [(ngModel)]="formData.IncludeZeroStock"
+              #incZeroStockRef
+              onLabel="Yes"
+              offLabel="No"
+              style="width: 75px"
+            ></kendo-switch>
+          </kendo-formfield>
+        </div> -->
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+  <div class="row">
+    <div class="col-12 my-4">
+      <kendo-grid
+        [data]="gridData"
+        [pageSize]="paging.pagesize"
+        [skip]="paging.skip"
+        [pageable]="paging.pageable"
+        (pageChange)="onPageChange($event, f)"
+        [loading]="flags.isTableLoading"
+        [resizable]="true"
+        class="auto-height"
+        #grid="kendoGrid"
+        [columnMenu]="{columnChooser: true, stick: true, sort: false, filter: false}"
+        [sortable]="true"
+      >
+        <ng-template kendoGridLoadingTemplate>
+          <app-loading-grid></app-loading-grid>
+        </ng-template>
+        <ng-template kendoGridNoRecordsTemplate>
+          <app-no-data-grid *ngIf="!flags.isTableLoading"></app-no-data-grid>
+        </ng-template>
+
+        <ng-template kendoGridToolbarTemplate>
+          <div class="col-12 col-sm-auto ms-auto">
+            <p class="m-0 d-lg-none">&nbsp;</p>
+            <button [attr.accesskey]="accessKey.SEARCH" type="submit" class="btn btn-with-icon my-2 btn-info me-2" (click)="onQuery(f)">
+              <app-svg-icon icon="SEARCH" class="d-inline-block"></app-svg-icon>&nbsp;Query
+            </button>
+            <button
+              class="btn btn-with-icon my-2 btn-primary me-2"
+              (click)="onQuery(f)"
+              type="button"
+              [attr.accesskey]="ds.accessKey.REFRESH"
+            >
+              <app-svg-icon icon="REFRESH"></app-svg-icon>&nbsp;Refresh
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-success me-2"
+              (click)="fetchDataForExcel(grid)"
+              type="button"
+              [attr.accesskey]="ds.accessKey.PRINT_EXCEL"
+            >
+              <app-svg-icon icon="EXCEL"></app-svg-icon>&nbsp;Excel
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-warning me-2"
+              (click)="onExportToCsv()"
+              type="button"
+              [attr.accesskey]="ds.accessKey.PRINT_CSV"
+            >
+              <app-svg-icon icon="CSV"></app-svg-icon>&nbsp;CSV
+            </button>
+            <button
+              *roleGuard="{role: 'PRINT', screenId: currentScreen.id}"
+              class="btn btn-with-icon my-2 btn-danger me-2"
+              kendoGridPDFCommand
+              [attr.accesskey]="ds.accessKey.PRINT_PDF"
+            >
+              <app-svg-icon icon="PDF"></app-svg-icon>&nbsp;PDF
+            </button>
+          </div>
+          <!-- </div> -->
+        </ng-template>
+
+        <ng-container *ngFor="let header of gridHeaderList">
+          <kendo-grid-column
+            [field]="header.field"
+            [title]="header.title"
+            [autoSize]="false"
+            [width]="header?.width || 100"
+            [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            *ngIf="ds.hideColumn(header)"
+            [class]="{'text-end': header?.align === 'RIGHT', 'text-center': header?.align === 'CENTER'}"
+          >
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+              <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+            </ng-template>
+          </kendo-grid-column>
+        </ng-container>
+
+        <kendo-grid-pdf fileName="{{ currentScreen.id }}_LIST.pdf" [allPages]="true" paperSize="A4" [repeatHeaders]="true" [scale]="0.5">
+          <kendo-grid-pdf-margin top="1.5cm" left="0.5cm" right="0.5cm" bottom="1.25cm" style="font-size: 12px"></kendo-grid-pdf-margin>
+          <ng-template kendoGridPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+            <app-grid-pdf [pageNum]="pageNum" [totalPages]="totalPages"> </app-grid-pdf>
+          </ng-template>
+
+          <ng-container *ngFor="let header of gridHeaderList">
+            <kendo-grid-column
+              [field]="header.field"
+              [title]="header.title"
+              [width]="header?.width || 100"
+              [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+            >
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+              </ng-template>
+            </kendo-grid-column>
+          </ng-container>
+        </kendo-grid-pdf>
+
+        <kendo-grid-excel fileName="{{ currentScreen.id }}_LIST.xlsx">
+          <ng-container *ngIf="['BIN_VOLUME_QUERY'].includes(this.currentScreen.id)">
+            <ng-container *ngFor="let header of gridHeaderList1">
+              <kendo-excelexport-column [field]="header.field" [title]="header.title" [width]="header.width || 100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                  <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+                </ng-template>
+              </kendo-excelexport-column>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="['STOCK_QUERY_LOCATION_WISE'].includes(this.currentScreen.id)">
+            <ng-container *ngFor="let header of gridHeaderList2">
+              <kendo-excelexport-column [field]="header.field" [title]="header.title" [width]="header.width || 100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                  <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+                </ng-template>
+              </kendo-excelexport-column>
+            </ng-container>
+          </ng-container>
+        </kendo-grid-excel>
+      </kendo-grid>
+    </div>
+  </div>
+</div>
+
+<div kendoDialogContainer></div>

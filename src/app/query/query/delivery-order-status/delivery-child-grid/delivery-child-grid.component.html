@@ -1,0 +1,35 @@
+<kendo-grid
+  [data]="gridData"
+  [loading]="flags.isTableLoading"
+  [pageSize]="5"
+  [skip]="skip"
+  [pageable]="false"
+  #grid="kendoGrid"
+  scrollable="none"
+  (pageChange)="pageChange($event)"
+  [navigable]="['table', 'pager']"
+  kendoGridFocusable
+>
+  <ng-template kendoGridLoadingTemplate>
+    <app-loading-grid></app-loading-grid>
+  </ng-template>
+  <ng-template kendoGridNoRecordsTemplate>
+    <app-no-data-grid *ngIf="!flags.isTableLoading"></app-no-data-grid>
+  </ng-template>
+  <ng-container *ngFor="let header of gridHeaderList">
+    {{ header | json }}
+    <kendo-grid-column
+      [field]="header.field"
+      [title]="header.title"
+      [autoSize]="false"
+      [width]="header?.width || 100"
+      [minResizableWidth]="header?.minResizableWidth || header?.width || 0"
+    >
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        <data-format [data]="dataItem[header.field]" [type]="header?.type" [config]="header?.typeConfig"></data-format>
+      </ng-template>
+    </kendo-grid-column>
+  </ng-container>
+</kendo-grid>
+
+<!-- <div kendoDialogContainer></div> -->

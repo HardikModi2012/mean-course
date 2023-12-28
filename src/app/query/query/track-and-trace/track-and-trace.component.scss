@@ -1,0 +1,6 @@
+#tracking-widget-div {
+  display: grid;
+  text-align: center;
+  align-content: center;
+  height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
+}
