@@ -1,26 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
-  selector: 'app-course-list',
-  templateUrl: './course-list.component.html',
-  styleUrls: ['./course-list.component.css']
+  selector: "app-course-list",
+  templateUrl: "./course-list.component.html",
+  styleUrls: ["./course-list.component.css"],
 })
 export class CourseListComponent implements OnInit {
+  gridData: BehaviorSubject<[]> | undefined;
+  constructor() {}
 
+  ngOnInit() {}
 
-  gridData : BehaviorSubject<[]>
-  constructor() { }
+  openClassModel() {}
 
-  ngOnInit() {
-  }
-
-  openClassModel(){
-
-  }
-
-  gridRowSelected(){
+  gridRowSelected() {
     // this.
   }
-
 }

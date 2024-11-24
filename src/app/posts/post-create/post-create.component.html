@@ -14,7 +14,7 @@
       <!-- [ngModel]="post?.title"
         #title="ngModel" -->
       <!-- #postInput  -->
-      <mat-error *ngIf="form.get('title').invalid"
+      <mat-error *ngIf="form.get('title')?.invalid"
         >Please enter post title.</mat-error
       >
     </mat-form-field>
@@ -27,7 +27,7 @@
       <input type="file" #filePicker (change)="onImagePicked($event)" />
     </div>
     <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview">
-      <input [src]="imagePreview" [alt]="form.value.title" />
+      <img [src]="imagePreview" [alt]="form.value.title" />
     </div>
     <!-- <mat-form-field>
       <input type="text" name="otp" ngModel minlength="3" class="form-control steps" required #title="ngModel"/>-->
@@ -46,7 +46,7 @@
         placeholder="please add data"
       ></textarea>
       <!-- <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea> -->
-      <mat-error *ngIf="form.get('content').invalid"
+      <mat-error *ngIf="form.get('content')?.invalid"
         >Please enter post content.</mat-error
       >
     </mat-form-field>

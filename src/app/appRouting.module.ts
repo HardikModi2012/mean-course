@@ -9,21 +9,28 @@ import { SignupComponent } from "./auth/signup/signup.component";
 
 const routes: Routes = [
   { path: "", component: PostsListComponent }, //
-  { path: "posts", component: PostsListComponent }, // , canActivate: [AuthGuard]
-  { path: "create", component: PostCreateComponent },
+  { path: "posts", component: PostsListComponent, title: "posts" }, // , canActivate: [AuthGuard]
+  { path: "create", component: PostCreateComponent, title: "create-post" },
   {
     path: "edit/:id",
     component: PostCreateComponent,
+    title: "edit",
     canActivate: [AuthGuard],
   },
+  // {
+  //   path: "edit/:id/:courseId",   // by doing this way we can pass multiple id in queryParams
+  //   component: PostCreateComponent,
+  //   canActivate: [AuthGuard],
+  // },
   {
     path: "create-course",
     component: CreateCourseComponent,
+    title: "new course",
     canActivate: [AuthGuard],
   },
-  { path: "login", component: LoginComponent },
-  { path: "signup", component: SignupComponent },
-  { path: "**", component: PostsListComponent },
+  { path: "login", component: LoginComponent, title: "login" },
+  { path: "signup", component: SignupComponent, title: "signup" },
+  { path: "**", component: PostsListComponent, title: "" },
 ];
 
 @NgModule({

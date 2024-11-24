@@ -1,10 +1,19 @@
 <!-- <app-message [isVisible]="true"></app-message> -->
-<app-header></app-header>
-<main>
-  <!-- <app-post-create></app-post-create>
+<!-- <app-header></app-header> -->
+<app-sidebar (onToggleSideNav)="onToggleSideNav($event)"></app-sidebar>
+<app-body
+  [collapsed]="isSideNavCollapsed"
+  [screenWidth]="screenWidth"
+></app-body>
+<router-outlet>
+  <!-- <app-register [title]="childMessage"></app-register> -->
+</router-outlet>
+
+<!-- <main> -->
+<!-- <app-post-create></app-post-create>
   <app-posts-list></app-posts-list> -->
-    <router-outlet></router-outlet>
-  <!-- <app-post-create (postCreated)="onAddedPost($event)"></app-post-create>
+<!-- <router-outlet></router-outlet> -->
+<!-- <app-post-create (postCreated)="onAddedPost($event)"></app-post-create>
   <app-posts-list [posts]="storedPosts"></app-posts-list> -->
-</main>
+<!-- </main> -->
 <!-- <app-sidenav [class.is-expanded]="true"></app-sidenav> -->

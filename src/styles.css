@@ -1,21 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
-
-
-p{
+/* 
+p {
   user-select: none;
-  /* will not allow to select */
 }
 
-div{
+div {
   place-items: center;
 }
 
-/* div{
-  clip-path: ellipse(25% 40% at 50% 50%);
-} */
-
-
-blend{
+blend {
   width: 100px;
   height: 500px;
   display: flex;
@@ -23,14 +16,53 @@ blend{
   justify-content: center;
 }
 
-.blend{
+.blend {
   position: absolute;
 }
 
-.blend h1{
+.blend h1 {
   font-size: 150px;
   mix-blend-mode: overlay;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+} */
+
+/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  margin: 1.25rem 0 1.25rem 0;
+  box-shadow: 0 0.25rem 0.5rem #e6edef;
+
+  .card-head {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #edf1f7;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .card-body {
+    padding: 1rem 1.5rem;
+  }
+}

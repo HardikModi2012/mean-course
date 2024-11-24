@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { Post } from "src/app/posts/post.model";
@@ -12,18 +12,18 @@ import { Subscription } from "rxjs";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   isLoading = false;
   private authStatusSub!: Subscription;
 
   constructor(private authS: AuthService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.authStatusSub = this.authS.getAuthStatusListener().subscribe(
-      authStatus => {
+    this.authStatusSub = this.authS
+      .getAuthStatusListener()
+      .subscribe((authStatus) => {
         this.isLoading = false;
-      }
-     )
+      });
   }
 
   onLogin(form: NgForm) {
@@ -34,8 +34,7 @@ export class LoginComponent implements OnInit {
     this.authS.loginUser(form.value.email, form.value.password);
   }
 
-
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.authStatusSub.unsubscribe();
   }
 }
